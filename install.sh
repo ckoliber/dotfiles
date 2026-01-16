@@ -275,7 +275,7 @@ install_omp() {
   elif command -v termux-info >/dev/null 2>&1; then
     if ! command -v oh-my-posh >/dev/null 2>&1; then
       echo "Oh My Posh not found. Installing Oh My Posh..."
-      curl -s https://ohmyposh.dev/install.sh | bash -s
+      pkg install -y oh-my-posh
     fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
     if ! command -v oh-my-posh >/dev/null 2>&1; then

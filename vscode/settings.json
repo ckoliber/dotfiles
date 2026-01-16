@@ -12,6 +12,7 @@
   "editor.fontFamily": "MesloLGM Nerd Font",
   "diffEditor.maxComputationTime": 0,
   "makefile.configureOnOpen": false,
+  "go.toolsManagement.autoUpdate": true,
   "github.copilot.nextEditSuggestions.enabled": true,
   "[tf]": {
     "editor.defaultFormatter": "hashicorp.terraform"
