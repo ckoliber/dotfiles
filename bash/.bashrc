@@ -12,17 +12,19 @@ if command -v tmux &>/dev/null && [ -z "$TMUX" ] && [ -z "$VSCODE_INJECTION" ]; 
     fi
 fi
 
+# Initialize direnv
+if command -v direnv &>/dev/null; then
+    eval "$(direnv hook bash)"
+fi
+
 # Initialize oh-my-posh
 if command -v oh-my-posh &>/dev/null; then
     eval "$(oh-my-posh init bash --config ~/.default.omp.json)"
 fi
 
 # Aliases
-alias ll='ls -lah'
 alias g='git'
-alias gs='git status'
-alias gd='git pull'
-alias gp='git push'
+alias ll='ls -lah'
 
 # History settings
 export HISTSIZE=10000

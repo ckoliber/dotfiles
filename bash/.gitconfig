@@ -1,3 +1,11 @@
 [user]
 	name = KoLiBer
 	email = ckoliber@gmail.com
+
+[alias]
+	st = status
+	co = checkout
+	br = branch
+	cm = commit
+	df = diff
+	lg = log --oneline --graph --all --decorate
