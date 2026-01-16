@@ -17,7 +17,7 @@ Reload your shell, then proceed with the installation steps below.
 ### Installation (All Platforms)
 
 ```bash
-git clone https://github.com/yourusername/dotfiles.git
+git clone https://github.com/ckoliber/dotfiles.git
 cd dotfiles
 bash install.sh
 ```
