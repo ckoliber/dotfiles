@@ -1,0 +1,12 @@
+[window]
+# decorations = "None"
+opacity = 1
+decorations_theme_variant = "Dark"
+
+[shell]
+program = "/usr/bin/bash"
+args = ["--login"]
+
+[font]
+normal = { family = "MesloLGL Nerd Font" }
+size = 14

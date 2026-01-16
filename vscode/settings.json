@@ -1,0 +1,49 @@
+{
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.colorTheme": "Hyper Term Black",
+  "terminal.integrated.fontFamily": "MesloLGM Nerd Font",
+  "terminal.integrated.defaultProfile.windows": "bash",
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.osx": "bash",
+  "editor.fontFamily": "MesloLGM Nerd Font",
+  "diffEditor.maxComputationTime": 0,
+  "makefile.configureOnOpen": false,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "[tf]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "[tfvars]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "[hcl]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+  "[grafana-alloy]": {
+    "editor.defaultFormatter": "Grafana.grafana-alloy"
+  },
+  "[jsonnet]": {
+    "editor.defaultFormatter": "Grafana.vscode-jsonnet"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "customLocalFormatters.formatters": [
+    {
+      "command": "terragrunt hcl format --stdin",
+      "languages": ["hcl"]
+    }
+  ]
+}
