@@ -18,8 +18,7 @@ Reload your shell, then proceed with the installation steps below.
 
 ```bash
 git clone https://github.com/ckoliber/dotfiles.git
-cd dotfiles
-bash install.sh
+bash dotfiles/install.sh
 ```
 
 ## What's Included

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES="$(dirname $(pwd)/$0)"
 
 copy() {
   local SRC=$1
@@ -171,9 +171,9 @@ install_bash() {
     return
   fi
 
-  link "$DOTFILES_DIR/bash/.bashrc" "$HOME/.bashrc"
-  link "$DOTFILES_DIR/bash/.profile" "$HOME/.profile"
-  link "$DOTFILES_DIR/bash/.gitconfig" "$HOME/.gitconfig"
+  link "$DOTFILES/bash/.bashrc" "$HOME/.bashrc"
+  link "$DOTFILES/bash/.profile" "$HOME/.profile"
+  link "$DOTFILES/bash/.gitconfig" "$HOME/.gitconfig"
 }
 
 install_tmux() {
@@ -202,7 +202,7 @@ install_tmux() {
     return
   fi
 
-  link "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
+  link "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
 }
 
 install_mise() {
@@ -231,7 +231,7 @@ install_mise() {
     return
   fi
 
-  link "$DOTFILES_DIR/mise/config.toml" "$HOME/.config/mise/config.toml"
+  link "$DOTFILES/mise/config.toml" "$HOME/.config/mise/config.toml"
 }
 
 install_ssh() {
@@ -292,7 +292,7 @@ install_omp() {
     return
   fi
 
-  link "$DOTFILES_DIR/omp/default.omp.json" "$HOME/.default.omp.json"
+  link "$DOTFILES/omp/default.omp.json" "$HOME/.default.omp.json"
 }
 
 install_vim() {
@@ -321,7 +321,7 @@ install_vim() {
     return
   fi
 
-  link "$DOTFILES_DIR/vim/.vimrc" "$HOME/.vimrc"
+  link "$DOTFILES/vim/.vimrc" "$HOME/.vimrc"
 }
 
 install_vscode() {
@@ -349,9 +349,9 @@ install_vscode() {
     return
   fi
 
-  link "$DOTFILES_DIR/vscode/settings.json" "$VSCODE_HOME/settings.json"
-  link "$DOTFILES_DIR/vscode/keybindings.json" "$VSCODE_HOME/keybindings.json"
-  cat "$DOTFILES_DIR/vscode/extensions.txt" | while read -r extension; do
+  link "$DOTFILES/vscode/settings.json" "$VSCODE_HOME/settings.json"
+  link "$DOTFILES/vscode/keybindings.json" "$VSCODE_HOME/keybindings.json"
+  cat "$DOTFILES/vscode/extensions.txt" | while read -r extension; do
     code --install-extension "$extension"
   done
 }
@@ -384,7 +384,7 @@ install_alacritty() {
     return
   fi
 
-  link "$DOTFILES_DIR/alacritty/$PLATFORM.toml" "$ALACRITTY_HOME/alacritty.toml"
+  link "$DOTFILES/alacritty/$PLATFORM.toml" "$ALACRITTY_HOME/alacritty.toml"
 }
 
 install_docker() {
@@ -412,7 +412,7 @@ install_docker() {
     return
   fi
 
-  link "$DOTFILES_DIR/docker/daemon.json" "$DOCKER_HOME/daemon.json"
+  link "$DOTFILES/docker/daemon.json" "$DOCKER_HOME/daemon.json"
 }
 
 install_chrome() {
