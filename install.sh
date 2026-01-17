@@ -103,6 +103,10 @@ install_bash() {
       echo "Direnv not found. Installing Direnv..."
       winget install -e --disable-interactivity direnv.direnv
     fi
+    if ! command -v starship >/dev/null 2>&1; then
+      echo "Starship not found. Installing Starship..."
+      winget install -e --disable-interactivity Starship.Starship
+    fi
   elif command -v termux-info >/dev/null 2>&1; then
     if ! command -v git >/dev/null 2>&1; then
       echo "Git not found. Installing Git..."
@@ -123,6 +127,10 @@ install_bash() {
     if ! command -v direnv >/dev/null 2>&1; then
       echo "Direnv not found. Installing Direnv..."
       pkg install -y direnv
+    fi
+    if ! command -v starship >/dev/null 2>&1; then
+      echo "Starship not found. Installing Starship..."
+      pkg install -y starship
     fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
     if ! command -v git >/dev/null 2>&1; then
@@ -145,6 +153,10 @@ install_bash() {
       echo "Direnv not found. Installing Direnv..."
       linux direnv
     fi
+    if ! command -v starship >/dev/null 2>&1; then
+      echo "Starship not found. Installing Starship..."
+      curl -s https://starship.rs/install.sh | bash -s
+    fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
     if ! command -v git >/dev/null 2>&1; then
       echo "Git not found. Installing Git..."
@@ -166,6 +178,10 @@ install_bash() {
       echo "Direnv not found. Installing Direnv..."
       brew install direnv
     fi
+    if ! command -v starship >/dev/null 2>&1; then
+      echo "Starship not found. Installing Starship..."
+      brew install starship
+    fi
   else
     echo "Unsupported OS for Bash installation"
     return
@@ -174,6 +190,7 @@ install_bash() {
   link "$DOTFILES/bash/.bashrc" "$HOME/.bashrc"
   link "$DOTFILES/bash/.profile" "$HOME/.profile"
   link "$DOTFILES/bash/.gitconfig" "$HOME/.gitconfig"
+  link "$DOTFILES/bash/starship.toml" "$HOME/.config/starship.toml"
 }
 
 install_tmux() {
@@ -315,35 +332,6 @@ install_fonts() {
     echo "Unsupported OS for Fonts installation"
     return
   fi
-}
-
-install_starship() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! command -v starship >/dev/null 2>&1; then
-      echo "Starship not found. Installing Starship..."
-      winget install -e --disable-interactivity Starship.Starship
-    fi
-  elif command -v termux-info >/dev/null 2>&1; then
-    if ! command -v starship >/dev/null 2>&1; then
-      echo "Starship not found. Installing Starship..."
-      pkg install -y starship
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
-    if ! command -v starship >/dev/null 2>&1; then
-      echo "Starship not found. Installing Starship..."
-      curl -s https://starship.rs/install.sh | bash -s
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
-    if ! command -v starship >/dev/null 2>&1; then
-      echo "Starship not found. Installing Starship..."
-      brew install starship
-    fi
-  else
-    echo "Unsupported OS for Starship installation"
-    return
-  fi
-
-  link "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml"
 }
 
 install_alacritty() {
