@@ -155,7 +155,7 @@ install_bash() {
     fi
     if ! command -v starship >/dev/null 2>&1; then
       echo "Starship not found. Installing Starship..."
-      curl -s https://starship.rs/install.sh | bash -s
+      curl -sS https://starship.rs/install.sh | sh
     fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
     if ! command -v git >/dev/null 2>&1; then
