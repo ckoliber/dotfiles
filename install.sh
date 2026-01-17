@@ -295,34 +295,45 @@ install_vim() {
   link "$DOTFILES/vim/.vimrc" "$HOME/.vimrc"
 }
 
+install_fonts() {
+  if command -v winget >/dev/null 2>&1; then
+    for font in "$DOTFILES/fonts/"*.ttf; do
+      copy "$font" "/c/Windows/Fonts/$(basename "$font")"
+    done
+  elif command -v termux-info >/dev/null 2>&1; then
+    copy "$DOTFILES/fonts/MesloLGMNerdFont-Regular.ttf" "$HOME/.termux/font.ttf"
+    termux-reload-settings
+  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
+    for font in "$DOTFILES/fonts/"*.ttf; do
+      copy "$font" "$HOME/.local/share/fonts/$(basename "$font")"
+    done
+  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
+    for font in "$DOTFILES/fonts/"*.ttf; do
+      copy "$font" "/Library/Fonts/$(basename "$font")"
+    done
+  else
+    echo "Unsupported OS for Fonts installation"
+    return
+  fi
+}
+
 install_starship() {
   if command -v winget >/dev/null 2>&1; then
-    for font in "$DOTFILES/starship/"*.ttf; do
-      copy "$font" "$HOME/Library/Fonts/$(basename "$font")"
-    done
     if ! command -v starship >/dev/null 2>&1; then
       echo "Starship not found. Installing Starship..."
       winget install -e --disable-interactivity Starship.Starship
     fi
   elif command -v termux-info >/dev/null 2>&1; then
-    copy "$DOTFILES/starship/MesloLGMNerdFont-Regular.ttf" "$HOME/.termux/font.ttf"
-    termux-reload-settings
     if ! command -v starship >/dev/null 2>&1; then
       echo "Starship not found. Installing Starship..."
       pkg install -y starship
     fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
-    for font in "$DOTFILES/starship/"*.ttf; do
-      copy "$font" "$HOME/.local/share/fonts/$(basename "$font")"
-    done
     if ! command -v starship >/dev/null 2>&1; then
       echo "Starship not found. Installing Starship..."
       curl -s https://starship.rs/install.sh | bash -s
     fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
-    for font in "$DOTFILES/starship/"*.ttf; do
-      copy "$font" "$HOME/Library/Fonts/$(basename "$font")"
-    done
     if ! command -v starship >/dev/null 2>&1; then
       echo "Starship not found. Installing Starship..."
       brew install starship
@@ -524,6 +535,7 @@ install_tmux
 install_mise
 install_ssh
 install_vim
+install_fonts
 install_starship
 install_alacritty
 install_vscode
