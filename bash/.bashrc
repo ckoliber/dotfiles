@@ -17,9 +17,9 @@ if command -v direnv &>/dev/null; then
     eval "$(direnv hook bash)"
 fi
 
-# Initialize oh-my-posh
-if command -v oh-my-posh &>/dev/null; then
-    eval "$(oh-my-posh init bash --config ~/.default.omp.json)"
+# Initialize starship
+if command -v starship &>/dev/null; then
+    eval "$(starship init bash)"
 fi
 
 # Aliases

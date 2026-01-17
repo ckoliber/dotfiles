@@ -266,35 +266,6 @@ install_ssh() {
   fi
 }
 
-install_omp() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! command -v oh-my-posh >/dev/null 2>&1; then
-      echo "Oh My Posh not found. Installing Oh My Posh..."
-      winget install -e --disable-interactivity JanDeDobbeleer.OhMyPosh
-    fi
-  elif command -v termux-info >/dev/null 2>&1; then
-    if ! command -v oh-my-posh >/dev/null 2>&1; then
-      echo "Oh My Posh not found. Installing Oh My Posh..."
-      pkg install -y oh-my-posh
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
-    if ! command -v oh-my-posh >/dev/null 2>&1; then
-      echo "Oh My Posh not found. Installing Oh My Posh..."
-      curl -s https://ohmyposh.dev/install.sh | bash -s
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
-    if ! command -v oh-my-posh >/dev/null 2>&1; then
-      echo "Oh My Posh not found. Installing Oh My Posh..."
-      brew install jandedobbeleer/oh-my-posh/oh-my-posh
-    fi
-  else
-    echo "Unsupported OS for Oh My Posh installation"
-    return
-  fi
-
-  link "$DOTFILES/omp/default.omp.json" "$HOME/.default.omp.json"
-}
-
 install_vim() {
   if command -v winget >/dev/null 2>&1; then
     if ! command -v vim >/dev/null 2>&1; then
@@ -322,6 +293,77 @@ install_vim() {
   fi
 
   link "$DOTFILES/vim/.vimrc" "$HOME/.vimrc"
+}
+
+install_starship() {
+  if command -v winget >/dev/null 2>&1; then
+    for font in "$DOTFILES/starship/"*.ttf; do
+      copy "$font" "$HOME/Library/Fonts/$(basename "$font")"
+    done
+    if ! command -v starship >/dev/null 2>&1; then
+      echo "Starship not found. Installing Starship..."
+      winget install -e --disable-interactivity Starship.Starship
+    fi
+  elif command -v termux-info >/dev/null 2>&1; then
+    copy "$DOTFILES/starship/MesloLGMNerdFont-Regular.ttf" "$HOME/.termux/font.ttf"
+    termux-reload-settings
+    if ! command -v starship >/dev/null 2>&1; then
+      echo "Starship not found. Installing Starship..."
+      pkg install -y starship
+    fi
+  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
+    for font in "$DOTFILES/starship/"*.ttf; do
+      copy "$font" "$HOME/.local/share/fonts/$(basename "$font")"
+    done
+    if ! command -v starship >/dev/null 2>&1; then
+      echo "Starship not found. Installing Starship..."
+      curl -s https://starship.rs/install.sh | bash -s
+    fi
+  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
+    for font in "$DOTFILES/starship/"*.ttf; do
+      copy "$font" "$HOME/Library/Fonts/$(basename "$font")"
+    done
+    if ! command -v starship >/dev/null 2>&1; then
+      echo "Starship not found. Installing Starship..."
+      brew install starship
+    fi
+  else
+    echo "Unsupported OS for Starship installation"
+    return
+  fi
+
+  link "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml"
+}
+
+install_alacritty() {
+  if command -v winget >/dev/null 2>&1; then
+    PLATFORM="windows"
+    ALACRITTY_HOME="$HOME/.config/alacritty"
+    if ! command -v alacritty >/dev/null 2>&1; then
+      echo "Alacritty not found. Installing Alacritty..."
+      winget install -e --disable-interactivity Alacritty.Alacritty
+    fi
+  elif command -v flatpak >/dev/null 2>&1; then
+    PLATFORM="linux"
+    ALACRITTY_HOME="$HOME/.var/app/com.alacritty.Alacritty/config/alacritty"
+    if ! command -v alacritty >/dev/null 2>&1; then
+      echo "Alacritty not found. Installing Alacritty..."
+      flatpak install -y flathub com.alacritty.Alacritty
+    fi
+  elif command -v brew >/dev/null 2>&1; then
+    PLATFORM="osx"
+    ALACRITTY_HOME="$HOME/.config/alacritty"
+    if ! command -v alacritty >/dev/null 2>&1; then
+      echo "Alacritty not found. Installing Alacritty..."
+      brew install --cask alacritty
+      xattr -dr com.apple.quarantine /Applications/Alacritty.app
+    fi
+  else
+    echo "Unsupported OS for Alacritty installation"
+    return
+  fi
+
+  link "$DOTFILES/alacritty/$PLATFORM.toml" "$ALACRITTY_HOME/alacritty.toml"
 }
 
 install_vscode() {
@@ -354,37 +396,6 @@ install_vscode() {
   cat "$DOTFILES/vscode/extensions.txt" | while read -r extension; do
     code --install-extension "$extension"
   done
-}
-
-install_alacritty() {
-  if command -v winget >/dev/null 2>&1; then
-    PLATFORM="windows"
-    ALACRITTY_HOME="$HOME/.config/alacritty"
-    if ! command -v alacritty >/dev/null 2>&1; then
-      echo "Alacritty not found. Installing Alacritty..."
-      winget install -e --disable-interactivity Alacritty.Alacritty
-    fi
-  elif command -v flatpak >/dev/null 2>&1; then
-    PLATFORM="linux"
-    ALACRITTY_HOME="$HOME/.var/app/com.alacritty.Alacritty/config/alacritty"
-    if ! command -v alacritty >/dev/null 2>&1; then
-      echo "Alacritty not found. Installing Alacritty..."
-      flatpak install -y flathub com.alacritty.Alacritty
-    fi
-  elif command -v brew >/dev/null 2>&1; then
-    PLATFORM="osx"
-    ALACRITTY_HOME="$HOME/.config/alacritty"
-    if ! command -v alacritty >/dev/null 2>&1; then
-      echo "Alacritty not found. Installing Alacritty..."
-      brew install --cask alacritty
-      xattr -dr com.apple.quarantine /Applications/Alacritty.app
-    fi
-  else
-    echo "Unsupported OS for Alacritty installation"
-    return
-  fi
-
-  link "$DOTFILES/alacritty/$PLATFORM.toml" "$ALACRITTY_HOME/alacritty.toml"
 }
 
 install_docker() {
@@ -512,10 +523,10 @@ install_bash
 install_tmux
 install_mise
 install_ssh
-install_omp
 install_vim
-install_vscode
+install_starship
 install_alacritty
+install_vscode
 install_docker
 install_chrome
 install_firefox
