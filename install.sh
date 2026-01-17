@@ -524,7 +524,6 @@ install_mise
 install_ssh
 install_vim
 install_fonts
-install_starship
 install_alacritty
 install_vscode
 install_docker
