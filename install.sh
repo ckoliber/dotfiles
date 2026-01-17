@@ -229,7 +229,9 @@ install_mise() {
       winget install -e --disable-interactivity jdx.mise
     fi
   elif command -v termux-info >/dev/null 2>&1; then
-    # TODO: Install directly when available in Termux repo
+    # TODO: Add Mise installation for Termux
+    echo "Mise installation not supported in Termux yet"
+    return
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
     if ! command -v mise >/dev/null 2>&1; then
       echo "Mise not found. Installing Mise..."
