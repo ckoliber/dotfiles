@@ -229,10 +229,7 @@ install_mise() {
       winget install -e --disable-interactivity jdx.mise
     fi
   elif command -v termux-info >/dev/null 2>&1; then
-    if ! command -v mise >/dev/null 2>&1; then
-      echo "Mise not found. Installing Mise..."
-      curl https://mise.run | sh
-    fi
+    # TODO: Install directly when available in Termux repo
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
     if ! command -v mise >/dev/null 2>&1; then
       echo "Mise not found. Installing Mise..."
