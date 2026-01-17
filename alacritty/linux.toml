@@ -8,5 +8,5 @@ program = "/usr/bin/bash"
 args = ["--login"]
 
 [font]
-normal = { family = "MesloLGL Nerd Font" }
+normal = { family = "MesloLGM Nerd Font" }
 size = 14

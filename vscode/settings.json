@@ -9,7 +9,7 @@
   "terminal.integrated.defaultProfile.windows": "bash",
   "terminal.integrated.defaultProfile.linux": "bash",
   "terminal.integrated.defaultProfile.osx": "bash",
-  "editor.fontFamily": "MesloLGM Nerd Font",
+  "editor.fontFamily": "Cascadia Code, monospace",
   "diffEditor.maxComputationTime": 0,
   "makefile.configureOnOpen": false,
   "go.toolsManagement.autoUpdate": true,

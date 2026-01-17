@@ -8,5 +8,5 @@ program = "C:\\Program Files\\Git\\bin\\bash.exe"
 args = ["--login"]
 
 [font]
-normal = { family = "MesloLGL Nerd Font" }
+normal = { family = "MesloLGM Nerd Font" }
 size = 14
