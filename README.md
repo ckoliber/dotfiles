@@ -27,7 +27,7 @@ bash dotfiles/install.sh
 - **Bash**: Shell configuration
 - **Docker**: Docker daemon settings
 - **Mise**: Development environment manager
-- **Oh My Posh**: Prompt theme configuration
+- **Starship**: Prompt theme configuration
 - **SSH**: SSH client configuration
 - **Tmux**: Terminal multiplexer settings
 - **Vim**: Text editor configuration
