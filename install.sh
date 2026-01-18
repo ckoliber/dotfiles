@@ -44,6 +44,7 @@ linux() {
 install() {
   if command -v winget >/dev/null 2>&1; then
     winget source update
+    powershell -NoProfile -Command "[Environment]::SetEnvironmentVariable('MSYS2_PATH_TYPE', 'inherit', 'User')"
   elif command -v termux-info >/dev/null 2>&1; then
     pkg update -y
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
@@ -397,14 +398,14 @@ install_vscode() {
 
   link "$DOTFILES/vscode/settings.json" "$VSCODE_HOME/settings.json"
   link "$DOTFILES/vscode/keybindings.json" "$VSCODE_HOME/keybindings.json"
-  cat "$DOTFILES/vscode/extensions.txt" | while read -r extension; do
+  sed 's/\r$//' "$DOTFILES/vscode/extensions.txt" | while read -r extension; do
     code --install-extension "$extension"
   done
 }
 
 install_docker() {
   if command -v winget >/dev/null 2>&1; then
-    DOCKER_HOME="$HOME/AppData/Roaming/Docker"
+    DOCKER_HOME="$HOME/.docker"
     if ! command -v docker >/dev/null 2>&1; then
       echo "Docker not found. Installing Docker..."
       winget install -e --disable-interactivity Docker.DockerDesktop
@@ -427,7 +428,7 @@ install_docker() {
     return
   fi
 
-  # copy "$DOTFILES/docker/daemon.json" "$DOCKER_HOME/daemon.json"
+  copy "$DOTFILES/docker/daemon.json" "$DOCKER_HOME/daemon.json"
 }
 
 install_chrome() {
