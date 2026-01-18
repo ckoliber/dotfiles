@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path setup
-export PATH="$PATH:$HOME/go/bin:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 # SSH agent
 if command -v ssh-agent &>/dev/null && command -v ssh-add &>/dev/null; then

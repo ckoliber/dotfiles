@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOTFILES="$(dirname $(pwd)/$0)"
+DOTFILES=$(dirname "$(pwd)/$0")
 
 copy() {
   local SRC=$1
@@ -24,12 +24,7 @@ link() {
   local DEST=$2
 
   mkdir -p "$(dirname "$DEST")"
-
-  if command -v cmd.exe >/dev/null 2>&1; then
-    cmd.exe /c mklink "$DEST" "$SRC"
-  else
-    ln -sf "$SRC" "$DEST"
-  fi
+  ln -sf "$SRC" "$DEST"
 }
 
 linux() {
@@ -48,7 +43,6 @@ linux() {
 
 install() {
   if command -v winget >/dev/null 2>&1; then
-    export HOME="$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r')"
     winget source update
   elif command -v termux-info >/dev/null 2>&1; then
     pkg update -y
@@ -206,7 +200,7 @@ install_tmux() {
     PLATFORM="windows"
     if ! command -v tmux >/dev/null 2>&1; then
       echo "Tmux not found. Installing Tmux..."
-      winget install -e --disable-interactivity NicholasBoll.Tmux
+      # winget install -e --disable-interactivity NicholasBoll.Tmux
     fi
   elif command -v termux-info >/dev/null 2>&1; then
     PLATFORM="android"
@@ -348,7 +342,7 @@ install_fonts() {
 install_alacritty() {
   if command -v winget >/dev/null 2>&1; then
     PLATFORM="windows"
-    ALACRITTY_HOME="$HOME/.config/alacritty"
+    ALACRITTY_HOME="$HOME/AppData/Roaming/alacritty"
     if ! command -v alacritty >/dev/null 2>&1; then
       echo "Alacritty not found. Installing Alacritty..."
       winget install -e --disable-interactivity Alacritty.Alacritty
@@ -378,7 +372,7 @@ install_alacritty() {
 
 install_vscode() {
   if command -v winget >/dev/null 2>&1; then
-    VSCODE_HOME="$(cmd.exe /c "echo %APPDATA%\Code\User" | tr -d '\r')"
+    VSCODE_HOME="$HOME/AppData/Roaming/Code/User"
     if ! command -v code >/dev/null 2>&1; then
       echo "VSCode not found. Installing VSCode..."
       winget install -e --disable-interactivity Microsoft.VisualStudioCode
@@ -410,7 +404,7 @@ install_vscode() {
 
 install_docker() {
   if command -v winget >/dev/null 2>&1; then
-    DOCKER_HOME="$(cmd.exe /c "echo %APPDATA%\Docker" | tr -d '\r')"
+    DOCKER_HOME="$HOME/AppData/Roaming/Docker"
     if ! command -v docker >/dev/null 2>&1; then
       echo "Docker not found. Installing Docker..."
       winget install -e --disable-interactivity Docker.DockerDesktop

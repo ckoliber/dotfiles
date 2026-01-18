@@ -1,14 +1,22 @@
 cat <<EOF
 [window]
-# decorations = "None"
+level = "AlwaysOnTop"
+decorations = "None"
 opacity = 1
 decorations_theme_variant = "Dark"
+startup_mode = "Maximized"
 
+[keyboard]
+bindings = [
+  { key = "\`", mods = "Command", action = "Hide" }
+]
 EOF
 
 [[ "$PLATFORM" == "windows" ]] && cat <<EOF
+[general]
+working_directory = '$(cygpath -w "$HOME")'
 [terminal.shell]
-program = "C:\\Program Files\\Git\\bin\\bash.exe"
+program = "C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe"
 args = ["-l"]
 
 EOF
