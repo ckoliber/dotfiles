@@ -209,7 +209,7 @@ install_tmux() {
       winget install -e --disable-interactivity NicholasBoll.Tmux
     fi
   elif command -v termux-info >/dev/null 2>&1; then
-    PLATFORM="linux"
+    PLATFORM="android"
     if ! command -v tmux >/dev/null 2>&1; then
       echo "Tmux not found. Installing Tmux..."
       pkg install -y tmux
