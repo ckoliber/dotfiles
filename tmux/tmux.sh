@@ -1,8 +1,26 @@
+cat <<EOF
 # Remap prefix from 'C-b' to 'C-a'
 unbind C-b
 set-option -g prefix C-a
 bind-key C-a send-prefix
+EOF
 
+[[ "$PLATFORM" == "windows" ]] && cat <<EOF
+set-option -g default-shell C:\\Program Files\\Git\\bin\\bash.exe
+
+EOF
+
+[[ "$PLATFORM" == "linux" ]] && cat <<EOF
+set-option -g default-shell /usr/bin/bash
+
+EOF
+
+[[ "$PLATFORM" == "osx" ]] && cat <<EOF
+set-option -g default-shell /opt/homebrew/bin/bash
+
+EOF
+
+cat <<EOF
 # Enable mouse mode
 set -g mouse on
 
@@ -33,3 +51,4 @@ setw -g window-status-current-style 'fg=colour1 bg=colour19 bold'
 setw -g window-status-current-format ' #I#[fg=colour249]:#[fg=colour255]#W#[fg=colour249]#F '
 setw -g window-status-style 'fg=colour9 bg=colour235'
 setw -g window-status-format ' #I#[fg=colour237]:#[fg=colour250]#W#[fg=colour244]#F '
+EOF

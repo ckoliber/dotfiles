@@ -1,19 +1,80 @@
 {
+  // ======================================================
+  // Git configuration
+  // ======================================================
   "git.confirmSync": false,
   "git.enableSmartCommit": true,
+
+  // ======================================================
+  // Editor behavior & formatting
+  // ======================================================
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.fontFamily": "Cascadia Code, monospace",
+
+  // ======================================================
+  // Workbench appearance
+  // ======================================================
   "workbench.iconTheme": "material-icon-theme",
   "workbench.colorTheme": "Hyper Term Black",
+
+  // ======================================================
+  // Integrated terminal (global)
+  // ======================================================
   "terminal.integrated.fontFamily": "MesloLGM Nerd Font",
+
+  // ======================================================
+  // Integrated terminal (Windows)
+  // ======================================================
   "terminal.integrated.defaultProfile.windows": "bash",
+  "terminal.integrated.profiles.windows": {
+    "bash": {
+      "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+      "args": ["-l"]
+    }
+  },
+
+  // ======================================================
+  // Integrated terminal (Linux)
+  // ======================================================
   "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "/usr/bin/bash",
+      "args": ["-l"]
+    }
+  },
+
+  // ======================================================
+  // Integrated terminal (macOS)
+  // ======================================================
   "terminal.integrated.defaultProfile.osx": "bash",
-  "editor.fontFamily": "Cascadia Code, monospace",
+  "terminal.integrated.profiles.osx": {
+    "bash": {
+      "path": "/opt/homebrew/bin/bash",
+      "args": ["-l"]
+    }
+  },
+
+  // ======================================================
+  // Diff / performance tuning
+  // ======================================================
   "diffEditor.maxComputationTime": 0,
+
+  // ======================================================
+  // Build tools & language tooling
+  // ======================================================
   "makefile.configureOnOpen": false,
   "go.toolsManagement.autoUpdate": true,
+
+  // ======================================================
+  // GitHub Copilot
+  // ======================================================
   "github.copilot.nextEditSuggestions.enabled": true,
+
+  // ======================================================
+  // Language-specific formatters
+  // ======================================================
   "[tf]": {
     "editor.defaultFormatter": "hashicorp.terraform"
   },
@@ -41,6 +102,10 @@
   "[toml]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
+
+  // ======================================================
+  // Custom local formatters
+  // ======================================================
   "customLocalFormatters.formatters": [
     {
       "command": "terragrunt hcl format --stdin",

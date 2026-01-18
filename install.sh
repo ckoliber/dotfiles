@@ -11,6 +11,14 @@ copy() {
   cp -rf "$SRC" "$DEST"
 }
 
+eval() {
+  local SRC=$1
+  local DEST=$2
+
+  mkdir -p "$(dirname "$DEST")"
+  source "$SRC" >"$DEST"
+}
+
 link() {
   local SRC=$1
   local DEST=$2
@@ -195,21 +203,25 @@ install_bash() {
 
 install_tmux() {
   if command -v winget >/dev/null 2>&1; then
+    PLATFORM="windows"
     if ! command -v tmux >/dev/null 2>&1; then
       echo "Tmux not found. Installing Tmux..."
       winget install -e --disable-interactivity NicholasBoll.Tmux
     fi
   elif command -v termux-info >/dev/null 2>&1; then
+    PLATFORM="linux"
     if ! command -v tmux >/dev/null 2>&1; then
       echo "Tmux not found. Installing Tmux..."
       pkg install -y tmux
     fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
+    PLATFORM="linux"
     if ! command -v tmux >/dev/null 2>&1; then
       echo "Tmux not found. Installing Tmux..."
       install tmux
     fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
+    PLATFORM="osx"
     if ! command -v tmux >/dev/null 2>&1; then
       echo "Tmux not found. Installing Tmux..."
       brew install tmux
@@ -219,7 +231,7 @@ install_tmux() {
     return
   fi
 
-  link "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
+  eval "$DOTFILES/tmux/tmux.sh" "$HOME/.tmux.conf"
 }
 
 install_mise() {
@@ -361,7 +373,7 @@ install_alacritty() {
     return
   fi
 
-  link "$DOTFILES/alacritty/$PLATFORM.toml" "$ALACRITTY_HOME/alacritty.toml"
+  eval "$DOTFILES/alacritty/alacritty.sh" "$ALACRITTY_HOME/alacritty.toml"
 }
 
 install_vscode() {

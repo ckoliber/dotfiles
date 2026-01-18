@@ -1,12 +1,33 @@
+cat <<EOF
 [window]
 # decorations = "None"
 opacity = 1
 decorations_theme_variant = "Dark"
 
+EOF
+
+[[ "$PLATFORM" == "windows" ]] && cat <<EOF
+[terminal.shell]
+program = "C:\\Program Files\\Git\\bin\\bash.exe"
+args = ["-l"]
+
+EOF
+
+[[ "$PLATFORM" == "linux" ]] && cat <<EOF
+[terminal.shell]
+program = "/usr/bin/bash"
+args = ["-l"]
+
+EOF
+
+[[ "$PLATFORM" == "osx" ]] && cat <<EOF
 [terminal.shell]
 program = "/opt/homebrew/bin/bash"
-args = ["--login"]
+args = ["-l"]
 
+EOF
+
+cat <<EOF
 [font]
 normal = { family = "MesloLGM Nerd Font" }
 size = 14
@@ -43,3 +64,4 @@ blue = '#0066ff'
 magenta = '#cc00ff'
 cyan = '#00ffff'
 white = '#FFFFFF'
+EOF
