@@ -425,7 +425,7 @@ install_docker() {
     DOCKER_HOME="$HOME/.docker"
     if ! command -v docker >/dev/null 2>&1; then
       echo "Docker not found. Installing Docker..."
-      brew install --cask docker-desktop
+      brew install --cask docker
       # xattr -dr com.apple.quarantine /Applications/Docker.app
     fi
   else
@@ -433,7 +433,7 @@ install_docker() {
     return
   fi
 
-  link "$DOTFILES/docker/daemon.json" "$DOCKER_HOME/daemon.json"
+  # copy "$DOTFILES/docker/daemon.json" "$DOCKER_HOME/daemon.json"
 }
 
 install_chrome() {
