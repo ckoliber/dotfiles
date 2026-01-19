@@ -1,7 +1,7 @@
 # Bashrc
 
-# Auto-start tmux if not already in tmux and not in VS Code terminal
-if command -v tmux &>/dev/null && [ -z "$TMUX" ] && [ -z "$VSCODE_INJECTION" ]; then
+# Auto-start tmux if not already in tmux and not in VS Code terminal and not in Termux
+if command -v tmux &>/dev/null && [ -z "$TMUX" ] && [ -z "$VSCODE_INJECTION" ] && [ -z "$TERMUX_VERSION" ]; then
     # Check if any tmux sessions exist
     if tmux ls 2>/dev/null | grep -q .; then
         # Attach to the first available session
