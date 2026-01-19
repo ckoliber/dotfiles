@@ -1,10 +1,3 @@
-cat <<EOF
-# Remap prefix from 'C-b' to 'C-a'
-unbind C-b
-set-option -g prefix C-a
-bind-key C-a send-prefix
-EOF
-
 [[ "$PLATFORM" == "windows" ]] && cat <<EOF
 set-option -g default-shell C:\\Program Files\\Git\\bin\\bash.exe
 
