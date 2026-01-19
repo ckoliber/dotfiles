@@ -21,29 +21,12 @@ git clone https://github.com/ckoliber/dotfiles.git
 bash dotfiles/install.sh
 ```
 
-## What's Included
+### Customization (OSX)
 
-- **Alacritty**: Terminal emulator configuration
-- **Bash**: Shell configuration
-- **Docker**: Docker daemon settings
-- **Mise**: Development environment manager
-- **Starship**: Prompt theme configuration
-- **SSH**: SSH client configuration
-- **Tmux**: Terminal multiplexer settings
-- **Vim**: Text editor configuration
-- **VS Code**: Editor settings, keybindings, and extensions
+#### Karabiner (PC Shortcuts)
 
-## Requirements
+If you like to have shortcuts like PC style, follow these steps
 
-The installation script will handle most dependencies. You'll need:
-
-- **Git** (on Windows, install via the command above to get Git Bash)
-- **Bash** (included by default on Linux, macOS, and Android)
-
-## Platform-Specific Configurations
-
-Some tools have platform-specific configurations:
-
-- **Alacritty**: Separate configs for Linux (`linux.toml`), macOS (`osx.toml`), and Windows (`windows.toml`)
-
-The installation script automatically detects your platform and applies the appropriate configurations.
+- Install **Karabiner** using `brew install --cask karabiner-elements`
+- Follow post-installation steps [here](https://karabiner-elements.pqrs.org/docs/getting-started/installation/)
+- Import PC-shortcuts from [here](https://ke-complex-modifications.pqrs.org/#pc_shortcuts)
