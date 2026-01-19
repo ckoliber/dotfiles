@@ -8,7 +8,7 @@ startup_mode = "Maximized"
 
 [keyboard]
 bindings = [
-  { key = "\`", mods = "Command", action = "Hide" }
+  { key = "1", mods = "Control", action = "Hide" }
 ]
 EOF
 
