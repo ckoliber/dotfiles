@@ -3,6 +3,8 @@
 	email = ckoliber@gmail.com
 
 [alias]
+	d = pull
+	p = push
 	st = status
 	co = checkout
 	br = branch
