@@ -102,10 +102,6 @@ install_bash() {
       echo "Wget not found. Installing Wget..."
       winget install -e --disable-interactivity JernejSimoncic.Wget
     fi
-    if ! command -v direnv >/dev/null 2>&1; then
-      echo "Direnv not found. Installing Direnv..."
-      winget install -e --disable-interactivity direnv.direnv
-    fi
     if ! command -v starship >/dev/null 2>&1; then
       echo "Starship not found. Installing Starship..."
       winget install -e --disable-interactivity Starship.Starship
@@ -126,10 +122,6 @@ install_bash() {
     if ! command -v wget >/dev/null 2>&1; then
       echo "Wget not found. Installing Wget..."
       pkg install -y wget
-    fi
-    if ! command -v direnv >/dev/null 2>&1; then
-      echo "Direnv not found. Installing Direnv..."
-      pkg install -y direnv
     fi
     if ! command -v starship >/dev/null 2>&1; then
       echo "Starship not found. Installing Starship..."
@@ -152,10 +144,6 @@ install_bash() {
       echo "Wget not found. Installing Wget..."
       linux wget
     fi
-    if ! command -v direnv >/dev/null 2>&1; then
-      echo "Direnv not found. Installing Direnv..."
-      linux direnv
-    fi
     if ! command -v starship >/dev/null 2>&1; then
       echo "Starship not found. Installing Starship..."
       curl -sS https://starship.rs/install.sh | sh
@@ -176,10 +164,6 @@ install_bash() {
     if ! command -v wget >/dev/null 2>&1; then
       echo "Wget not found. Installing Wget..."
       brew install wget
-    fi
-    if ! command -v direnv >/dev/null 2>&1; then
-      echo "Direnv not found. Installing Direnv..."
-      brew install direnv
     fi
     if ! command -v starship >/dev/null 2>&1; then
       echo "Starship not found. Installing Starship..."

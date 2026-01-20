@@ -12,11 +12,6 @@ if command -v tmux &>/dev/null && [ -z "$TMUX" ] && [ -z "$VSCODE_INJECTION" ] &
     fi
 fi
 
-# Initialize direnv
-if command -v direnv &>/dev/null; then
-    eval "$(direnv hook bash)"
-fi
-
 # Initialize starship
 if command -v starship &>/dev/null; then
     eval "$(starship init bash)"

@@ -3,8 +3,8 @@
 # Path setup
 export PATH="$PATH:$HOME/.local/bin"
 
-# SSH agent
-if command -v ssh-agent &>/dev/null && command -v ssh-add &>/dev/null; then
+# SSH agent (should only start ONCE per session)
+if command -v ssh-agent &>/dev/null && [ -z "$SSH_AUTH_SOCK" ]; then
     eval $(ssh-agent) && ssh-add 2>/dev/null
 fi
 

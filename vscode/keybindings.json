@@ -59,5 +59,16 @@
     "key": "ctrl+k ctrl+[",
     "command": "-editor.foldRecursively",
     "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+/",
+    "command": "editor.action.commentLine",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "cmd+c",
+    "command": "workbench.action.terminal.sendSignal",
+    "args": { "signal": "SIGINT" },
+    "when": "terminalFocus"
   }
 ]
