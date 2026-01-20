@@ -6,6 +6,9 @@ opacity = 1
 decorations_theme_variant = "Dark"
 startup_mode = "Maximized"
 
+[selection]
+save_to_clipboard = true
+
 [keyboard]
 bindings = [
   { key = "1", mods = "Control", action = "Hide" }
