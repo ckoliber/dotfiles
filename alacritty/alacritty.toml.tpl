@@ -8,9 +8,9 @@ opacity = 0.8
 [selection]
 save_to_clipboard = true
 
-#if OSX
 [keyboard]
 bindings = [
+#if OSX
   { key = "A", mods = "Command", chars = "\u0001" },       # Ctrl+A  line start
   { key = "B", mods = "Command", chars = "\u0002" },       # Ctrl+B  back char
   { key = "C", mods = "Command", chars = "\u0003" },       # Ctrl+C  SIGINT
@@ -33,24 +33,26 @@ bindings = [
   { key = "Z", mods = "Command", chars = "\u001A" },       # Ctrl+Z  SIGTSTP
   { key = "C", mods = "Command|Shift", action = "Copy" },  # Copy
   { key = "V", mods = "Command|Shift", action = "Paste" }, # Paste
-]
+#else
+  { key = "C", mods = "Control|Shift", action = "Copy" },  # Copy
+  { key = "V", mods = "Control|Shift", action = "Paste" }, # Paste
 #end
+]
 
 #if WINDOWS
 [general]
 working_directory = '$(cygpath -w "$HOME")'
-[terminal.shell]
-program = "C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe"
-args = ["-l"]
-#elif LINUX
-[terminal.shell]
-program = "/usr/bin/bash"
-args = ["-l"]
-#elif OSX
-[terminal.shell]
-program = "/opt/homebrew/bin/bash"
-args = ["-l"]
 #end
+
+[terminal.shell]
+#if WINDOWS
+program = "C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe"
+#elif LINUX
+program = "/usr/bin/bash"
+#elif OSX
+program = "/opt/homebrew/bin/bash"
+#end
+args = ["--login"]
 
 [font]
 normal = { family = "MesloLGM Nerd Font" }
