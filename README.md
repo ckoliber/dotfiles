@@ -14,19 +14,24 @@ winget install -e --disable-interactivity Git.Git
 
 Reload your shell, then proceed with the installation steps below.
 
+### OSX Users
+
+To swap the Command (⌘) and Control (⌃) keys in macOS:
+
+1. Open **System Settings** (or **System Preferences** on older macOS versions)
+2. Navigate to **Keyboard**
+3. Click on **Modifier Keys...** button (usually at the bottom right)
+4. Select your keyboard from the dropdown menu
+5. Change the mappings:
+   - Set **Control (⌃) Key** to **⌘ Command**
+   - Set **Command (⌘) Key** to **^ Control**
+6. Click **OK** to save changes
+
+This is useful for users who want to maintain muscle memory from other operating systems or prefer different key combinations for common shortcuts.
+
 ### Installation (All Platforms)
 
 ```bash
 git clone https://github.com/ckoliber/dotfiles.git
 bash dotfiles/install.sh
 ```
-
-### Customization (OSX)
-
-#### Karabiner (PC Shortcuts)
-
-If you like to have shortcuts like PC style, follow these steps
-
-- Install **Karabiner** using `brew install --cask karabiner-elements`
-- Follow post-installation steps [here](https://karabiner-elements.pqrs.org/docs/getting-started/installation/)
-- Import PC-shortcuts from [here](https://ke-complex-modifications.pqrs.org/#pc_shortcuts)
