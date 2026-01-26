@@ -31,9 +31,11 @@ bindings = [
   { key = "X", mods = "Command", chars = "\u0018" },       # Ctrl+X  cut
   { key = "Y", mods = "Command", chars = "\u0019" },       # Ctrl+Y  yank
   { key = "Z", mods = "Command", chars = "\u001A" },       # Ctrl+Z  SIGTSTP
+  { key = "1", mods = "Command", action = "Hide" },        # Hide
   { key = "C", mods = "Command|Shift", action = "Copy" },  # Copy
   { key = "V", mods = "Command|Shift", action = "Paste" }, # Paste
 #else
+  { key = "1", mods = "Control", action = "Hide" },        # Hide
   { key = "C", mods = "Control|Shift", action = "Copy" },  # Copy
   { key = "V", mods = "Control|Shift", action = "Paste" }, # Paste
 #end

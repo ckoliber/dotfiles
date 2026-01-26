@@ -214,7 +214,7 @@ install_tmux() {
     return
   fi
 
-  redner "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
+  render "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
 }
 
 install_mise() {
