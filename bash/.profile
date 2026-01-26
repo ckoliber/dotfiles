@@ -10,11 +10,7 @@ fi
 
 # Initialize mise
 if command -v mise &>/dev/null; then
-    if command -v cmd.exe &>/dev/null; then
-        eval "$(mise activate bash --shims)"
-    else
-        eval "$(mise activate bash)"
-    fi
+    eval "$(mise activate bash --shims)"
 fi
 
 # if running bash

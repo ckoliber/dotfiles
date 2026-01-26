@@ -11,20 +11,20 @@ copy() {
   cp -rf "$SRC" "$DEST"
 }
 
-eval() {
-  local SRC=$1
-  local DEST=$2
-
-  mkdir -p "$(dirname "$DEST")"
-  source "$SRC" >"$DEST"
-}
-
 link() {
   local SRC=$1
   local DEST=$2
 
   mkdir -p "$(dirname "$DEST")"
   ln -sf "$SRC" "$DEST"
+}
+
+render() {
+  local SRC=$1
+  local DEST=$2
+
+  mkdir -p "$(dirname "$DEST")"
+  awk -f "$DOTFILES/render.awk" "$SRC" >"$DEST"
 }
 
 linux() {
@@ -43,11 +43,14 @@ linux() {
 
 install() {
   if command -v winget >/dev/null 2>&1; then
+    export WINDOWS=1
     winget source update
     powershell -NoProfile -Command "[Environment]::SetEnvironmentVariable('MSYS2_PATH_TYPE', 'inherit', 'User')"
   elif command -v termux-info >/dev/null 2>&1; then
+    export ANDROID=1
     pkg update -y
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
+    export LINUX=1
     if command -v apt >/dev/null 2>&1; then
       apt update -y
       if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
@@ -83,6 +86,7 @@ install() {
       exit 1
     fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
+    export OSX=1
     if ! command -v brew >/dev/null 2>&1; then
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
@@ -210,7 +214,7 @@ install_tmux() {
     return
   fi
 
-  eval "$DOTFILES/tmux/tmux.sh" "$HOME/.tmux.conf"
+  redner "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
 }
 
 install_mise() {
@@ -352,7 +356,9 @@ install_alacritty() {
     return
   fi
 
-  eval "$DOTFILES/alacritty/alacritty.sh" "$ALACRITTY_HOME/alacritty.toml"
+  render "$DOTFILES/alacritty/alacritty.toml.tpl" "$ALACRITTY_HOME/alacritty.toml"
+  alacritty -o 'window.startup_mode="Maximized"' -e sh -c 'tput cols > /tmp/max_cols' >/dev/null 2>&1
+  sed -i '' "s/columns = 0/columns = $(cat /tmp/max_cols)/" "$ALACRITTY_HOME/alacritty.toml"
 }
 
 install_vscode() {
