@@ -358,8 +358,8 @@ install_alacritty() {
   fi
 
   render "$DOTFILES/alacritty/alacritty.toml.tpl" "$ALACRITTY_HOME/alacritty.toml"
-  alacritty -o 'window.startup_mode="Maximized"' -e sh -c 'tput cols > /tmp/max_cols' >/dev/null 2>&1
-  sed -i '' "s/columns = 0/columns = $(cat /tmp/max_cols)/" "$ALACRITTY_HOME/alacritty.toml"
+  read rows columns < <(alacritty -v -o 'window.startup_mode="Maximized"' -e sh -c '' | awk '/PTY dimensions:/{print $7, $9}') && lines=$(($rows / 2))
+  sed -i.bak -e "s/lines = 0/lines = $lines/" -e "s/columns = 0/columns = $columns/" "$ALACRITTY_HOME/alacritty.toml" && rm "$ALACRITTY_HOME/alacritty.toml.bak"
 }
 
 install_vscode() {

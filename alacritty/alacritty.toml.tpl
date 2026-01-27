@@ -1,7 +1,7 @@
 [window]
 level = "AlwaysOnTop"
 position = { x = 0, y = 0 }
-dimensions = { columns = 0, lines = 30 }
+dimensions = { columns = 0, lines = 0 }
 decorations = "None"
 opacity = 0.8
 
