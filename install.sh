@@ -305,6 +305,7 @@ install_vim() {
   fi
 
   link "$DOTFILES/vim/.vimrc" "$HOME/.vimrc"
+  git clone https://github.com/morhetz/gruvbox.git $HOME/.vim
 }
 
 install_fonts() {
