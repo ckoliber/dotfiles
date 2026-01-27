@@ -12,7 +12,9 @@ First, install Git Bash:
 winget install -e --disable-interactivity Git.Git
 ```
 
-Reload your shell, then proceed with the installation steps below.
+Now open your **Git Bash** shell in **Administrator** mode
+
+---
 
 ### OSX Users
 
@@ -29,9 +31,13 @@ To swap the Command (⌘) and Control (⌃) keys in macOS:
 
 This is useful for users who want to maintain muscle memory from other operating systems or prefer different key combinations for common shortcuts.
 
+---
+
 ### Installation (All Platforms)
 
 ```bash
 git clone https://github.com/ckoliber/dotfiles.git
 bash dotfiles/install.sh
 ```
+
+---

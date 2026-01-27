@@ -189,7 +189,12 @@ install_tmux() {
     PLATFORM="windows"
     if ! command -v tmux >/dev/null 2>&1; then
       echo "Tmux not found. Installing Tmux..."
-      # TODO: Install tmux in MinGW or migrate to MSYS2
+      winget install -e --disable-interactivity MSYS2.MSYS2
+      /c/msys64/usr/bin/pacman -S --noconfirm tmux
+      cp /c/msys64/usr/bin/tmux.exe /usr/bin/tmux.exe
+      cp -Rf /c/msys64/usr/bin/msys-event*.dll /usr/bin/
+      cp -Rf /c/msys64/usr/bin/msys-ncursesw6.dll /usr/bin/
+      winget uninstall -e --disable-interactivity MSYS2.MSYS2
     fi
   elif command -v termux-info >/dev/null 2>&1; then
     PLATFORM="android"
@@ -224,7 +229,6 @@ install_mise() {
       winget install -e --disable-interactivity jdx.mise
     fi
   elif command -v termux-info >/dev/null 2>&1; then
-    # TODO: Add Mise installation for Termux
     echo "Mise installation not supported in Termux yet"
     return
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
@@ -305,7 +309,7 @@ install_vim() {
   fi
 
   link "$DOTFILES/vim/.vimrc" "$HOME/.vimrc"
-  git clone https://github.com/morhetz/gruvbox.git $HOME/.vim || true
+  git clone https://github.com/morhetz/gruvbox.git "$HOME/.vim" || true
 }
 
 install_fonts() {
@@ -337,7 +341,7 @@ install_alacritty() {
     if ! command -v alacritty >/dev/null 2>&1; then
       echo "Alacritty not found. Installing Alacritty..."
       winget install -e --disable-interactivity Alacritty.Alacritty
-      # TODO: change lnk file to startup in %USERPROFILE%
+      powershell -NoProfile -Command '$lnk="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Alacritty\Alacritty.lnk"; $ws=New-Object -ComObject WScript.Shell; $sc=$ws.CreateShortcut($lnk); $sc.WorkingDirectory=$env:USERPROFILE; $sc.Save()'
     fi
   elif command -v flatpak >/dev/null 2>&1; then
     PLATFORM="linux"
@@ -393,11 +397,11 @@ install_vscode() {
   link "$DOTFILES/vscode/settings.json" "$VSCODE_HOME/settings.json"
   link "$DOTFILES/vscode/keybindings.json" "$VSCODE_HOME/keybindings.json"
   if [ ! -f "$VSCODE_HOME/extensions.txt" ]; then
+    link "$DOTFILES/vscode/extensions.txt" "$VSCODE_HOME/extensions.txt"
     sed 's/\r$//' "$VSCODE_HOME/extensions.txt" | while read -r extension; do
       code --install-extension "$extension"
     done
   fi
-  link "$DOTFILES/vscode/extensions.txt" "$VSCODE_HOME/extensions.txt"
 }
 
 install_docker() {
