@@ -390,12 +390,11 @@ install_vscode() {
   link "$DOTFILES/vscode/settings.json" "$VSCODE_HOME/settings.json"
   link "$DOTFILES/vscode/keybindings.json" "$VSCODE_HOME/keybindings.json"
   if [ ! -f "$VSCODE_HOME/extensions.txt" ]; then
-    echo "No extensions.txt file found for VSCode extensions installation"
-    link "$DOTFILES/vscode/extensions.txt" "$VSCODE_HOME/extensions.txt"
     sed 's/\r$//' "$VSCODE_HOME/extensions.txt" | while read -r extension; do
       code --install-extension "$extension"
     done
   fi
+  link "$DOTFILES/vscode/extensions.txt" "$VSCODE_HOME/extensions.txt"
 }
 
 install_docker() {
