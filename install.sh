@@ -189,12 +189,7 @@ install_tmux() {
     PLATFORM="windows"
     if ! command -v tmux >/dev/null 2>&1; then
       echo "Tmux not found. Installing Tmux..."
-      winget install -e --disable-interactivity MSYS2.MSYS2
-      /c/msys64/usr/bin/pacman -S --noconfirm tmux
-      cp /c/msys64/usr/bin/tmux.exe /usr/bin/tmux.exe
-      cp -Rf /c/msys64/usr/bin/msys-event*.dll /usr/bin/
-      cp -Rf /c/msys64/usr/bin/msys-ncursesw6.dll /usr/bin/
-      winget uninstall -e --disable-interactivity MSYS2.MSYS2
+      cp -Rf "$DOTFILES/tmux/windows/"* /usr/bin/
     fi
   elif command -v termux-info >/dev/null 2>&1; then
     PLATFORM="android"
