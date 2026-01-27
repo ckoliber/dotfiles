@@ -337,7 +337,7 @@ install_alacritty() {
     if ! command -v alacritty >/dev/null 2>&1; then
       echo "Alacritty not found. Installing Alacritty..."
       winget install -e --disable-interactivity Alacritty.Alacritty
-      # TODO: change lnk file to %USERPROFILE% startup
+      # TODO: change lnk file to startup in %USERPROFILE%
     fi
   elif command -v flatpak >/dev/null 2>&1; then
     PLATFORM="linux"
@@ -362,7 +362,7 @@ install_alacritty() {
   render "$DOTFILES/alacritty/alacritty.toml.tpl" "$ALACRITTY_HOME/alacritty.toml"
   read rows columns < <(alacritty -v -o 'window.startup_mode="Maximized"' -e echo | awk '/PTY dimensions:/{print $7, $9}') && lines=$(($rows / 2))
   sed -i.bak -e "s/lines = 0/lines = $lines/" -e "s/columns = 0/columns = $columns/" "$ALACRITTY_HOME/alacritty.toml" && rm "$ALACRITTY_HOME/alacritty.toml.bak"
-  # TODO: Add Alacritty toggle hotkey setup
+  # TODO: Add Alacritty toggle hotkey setup (on-boot => first run)
 }
 
 install_vscode() {
