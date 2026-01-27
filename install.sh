@@ -243,6 +243,7 @@ install_mise() {
   fi
 
   link "$DOTFILES/mise/config.toml" "$HOME/.config/mise/config.toml"
+  mise install -y
 }
 
 install_ssh() {
@@ -388,9 +389,13 @@ install_vscode() {
 
   link "$DOTFILES/vscode/settings.json" "$VSCODE_HOME/settings.json"
   link "$DOTFILES/vscode/keybindings.json" "$VSCODE_HOME/keybindings.json"
-  sed 's/\r$//' "$DOTFILES/vscode/extensions.txt" | while read -r extension; do
-    code --install-extension "$extension"
-  done
+  if [ ! -f "$VSCODE_HOME/extensions.txt" ]; then
+    echo "No extensions.txt file found for VSCode extensions installation"
+    link "$DOTFILES/vscode/extensions.txt" "$VSCODE_HOME/extensions.txt"
+    sed 's/\r$//' "$VSCODE_HOME/extensions.txt" | while read -r extension; do
+      code --install-extension "$extension"
+    done
+  fi
 }
 
 install_docker() {
