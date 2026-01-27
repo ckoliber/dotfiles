@@ -41,11 +41,6 @@ bindings = [
 #end
 ]
 
-#if WINDOWS
-[general]
-working_directory = '$(cygpath -w "$HOME")'
-#end
-
 [terminal.shell]
 #if WINDOWS
 program = "C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe"
