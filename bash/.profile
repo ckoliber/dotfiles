@@ -5,7 +5,8 @@ export PATH="$PATH:$HOME/.local/bin"
 
 # SSH agent (should only start ONCE per session)
 if command -v ssh-agent &>/dev/null && [ -z "$SSH_AUTH_SOCK" ]; then
-    eval $(ssh-agent) && ssh-add 2>/dev/null
+    eval $(ssh-agent | sed 's/SSH_AUTH_SOCK=\([^;]*\);/SSH_AUTH_SOCK="\1";/')
+    ssh-add 2>/dev/null
 fi
 
 # Initialize mise
