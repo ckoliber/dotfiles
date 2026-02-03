@@ -21,14 +21,3 @@ fi
 alias g='git'
 alias k='kubectl'
 alias ll='ls -lah'
-
-# History settings
-export HISTSIZE=10000
-export HISTFILESIZE=20000
-export HISTCONTROL=ignoredups:erasedups
-
-# Append to history file, don't overwrite
-shopt -s histappend
-
-# Save and reload history after each command
-export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"

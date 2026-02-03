@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Path setup
+unset PROMPT_COMMAND
 export PATH="$PATH:$HOME/.local/bin"
 
 # SSH agent (should only start ONCE per session)
