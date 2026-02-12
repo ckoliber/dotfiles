@@ -180,6 +180,7 @@ install_bash() {
 
   link "$DOTFILES/bash/.bashrc" "$HOME/.bashrc"
   link "$DOTFILES/bash/.profile" "$HOME/.profile"
+  link "$DOTFILES/bash/.profile" "$HOME/.zprofile"
   link "$DOTFILES/bash/.gitconfig" "$HOME/.gitconfig"
   link "$DOTFILES/bash/starship.toml" "$HOME/.config/starship.toml"
 }

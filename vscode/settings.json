@@ -75,13 +75,10 @@
   // ======================================================
   // Language-specific formatters
   // ======================================================
-  "[tf]": {
-    "editor.defaultFormatter": "hashicorp.terraform"
-  },
-  "[tfvars]": {
-    "editor.defaultFormatter": "hashicorp.terraform"
-  },
   "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "[terraform-vars]": {
     "editor.defaultFormatter": "hashicorp.terraform"
   },
   "[hcl]": {
