@@ -17,6 +17,11 @@ if command -v starship &>/dev/null; then
     eval "$(starship init bash)"
 fi
 
+# Initialize mise
+if command -v mise &>/dev/null; then
+    eval "$(mise activate bash)"
+fi
+
 # Aliases
 alias g='git'
 alias k='kubectl'

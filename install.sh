@@ -183,6 +183,9 @@ install_bash() {
   link "$DOTFILES/bash/.profile" "$HOME/.zprofile"
   link "$DOTFILES/bash/.gitconfig" "$HOME/.gitconfig"
   link "$DOTFILES/bash/starship.toml" "$HOME/.config/starship.toml"
+  if [ ! -f "$HOME/.gitconfig.local" ]; then
+    touch "$HOME/.gitconfig.local"
+  fi
 }
 
 install_tmux() {

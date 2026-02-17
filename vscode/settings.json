@@ -4,6 +4,7 @@
   // ======================================================
   "git.confirmSync": false,
   "git.enableSmartCommit": true,
+  "git.requireGitUserConfig": false,
 
   // ======================================================
   // Editor behavior & formatting
