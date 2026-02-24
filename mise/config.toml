@@ -1,5 +1,15 @@
 [tools]
-node = "latest"
+node = "25.6"
+python = "3.12"
+aws-cli = "latest"
+docker-cli = "latest"
+kubelogin = "latest"
+talosctl = "latest"
+kubectl = "latest"
+sops = "latest"
+k9s = "latest"
+jq = "latest"
+yq = "latest"
 
 [settings]
 experimental = true
