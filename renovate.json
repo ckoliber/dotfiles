@@ -2,11 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", ":dependencyDashboard"],
   "enabledManagers": ["mise"],
+  "minimumReleaseAge": "1 days",
   "packageRules": [
     {
-      "description": "Automerge minor and patch updates after one week",
+      "description": "Automerge minor and patch updates",
       "matchUpdateTypes": ["minor", "patch"],
-      "minimumReleaseAge": "7 days",
       "automerge": true
     }
   ]
