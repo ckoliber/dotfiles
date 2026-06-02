@@ -24,7 +24,20 @@ render() {
   local DEST=$2
 
   mkdir -p "$(dirname "$DEST")"
-  awk -f "$DOTFILES/render.awk" "$SRC" >"$DEST"
+  awk '
+    /^#if[ \t]+/   { m=($2 in ENVIRON); s=!m; next }
+    /^#elif[ \t]+/ { s=m || !(m=($2 in ENVIRON)); next }
+    /^#else/       { s=m; m=1; next }
+    /^#end/        { s=m=0; next }
+
+    !s {
+      while (match($0, /\$\{[A-Za-z_][A-Za-z0-9_]*\}/)) {
+        v = substr($0, RSTART+2, RLENGTH-3)
+        $0 = substr($0,1,RSTART-1) ENVIRON[v] substr($0,RSTART+RLENGTH)
+      }
+      print
+    }
+  ' "$SRC" >"$DEST"
 }
 
 update() {
