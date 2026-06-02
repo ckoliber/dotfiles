@@ -330,6 +330,25 @@ setup_vscode() {
   fi
 }
 
+setup_firefox() {
+  if [ -n "${WINDOWS:-}" ]; then
+    FIREFOX_HOME="$HOME/AppData/Roaming/Mozilla/Firefox/Profiles"
+  elif [ -n "${LINUX:-}" ]; then
+    FIREFOX_HOME="$HOME/.mozilla/firefox"
+  elif [ -n "${OSX:-}" ]; then
+    FIREFOX_HOME="$HOME/Library/Application Support/Firefox/Profiles"
+  else
+    echo "Unsupported OS for Firefox setup"
+    return
+  fi
+
+  for profile in "$FIREFOX_HOME/"*; do
+    if [ -d "$profile" ] && [ -f "$profile/prefs.js" ]; then
+      render "$DOTFILES/firefox/user.js.tpl" "$profile/user.js"
+    fi
+  done
+}
+
 setup_alacritty() {
   if [ -n "${WINDOWS:-}" ]; then
     ALACRITTY_HOME="$HOME/AppData/Roaming/alacritty"
@@ -355,4 +374,5 @@ setup_home
 setup_fonts
 setup_docker
 setup_vscode
+setup_firefox
 setup_alacritty
