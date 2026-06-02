@@ -92,8 +92,75 @@ update() {
 }
 
 install() {
+  local PKGS=()
+  if [ -n "${WINDOWS:-}" ]; then
+    PKGS=(
+      "cli:git:Git.Git"
+      "cli:vim:vim.vim"
+      "cli:wget:JernejSimoncic.Wget"
+      "run:tmux:cp -Rf \"$DOTFILES/home/tmux/\"* /usr/bin/"
+      "cli:mise:jdx.mise"
+      "cli:ssh:Microsoft.OpenSSH.Beta"
+      "cli:starship:Starship.Starship"
+      "gui:winget:Alacritty.Alacritty"
+      "gui:winget:Microsoft.VisualStudioCode"
+      "gui:winget:Docker.DockerDesktop"
+      "gui:winget:Mozilla.Firefox"
+      "gui:winget:SoftDeluxe.FreeDownloadManager"
+      "gui:winget:mpv.net"
+    )
+  elif [ -n "${ANDROID:-}" ]; then
+    PKGS=(
+      "cli:git:git"
+      "cli:vim:vim"
+      "cli:bash:bash"
+      "cli:curl:curl"
+      "cli:wget:wget"
+      "cli:tmux:tmux"
+      "cli:mise:mise"
+      "cli:ssh:openssh"
+      "cli:starship:starship"
+    )
+  elif [ -n "${LINUX:-}" ]; then
+    PKGS=(
+      "cli:git:git"
+      "cli:bash:bash"
+      "cli:curl:curl"
+      "cli:wget:wget"
+      "cli:tmux:tmux"
+      "cli:ssh:openssh openssh-client"
+      "cli:vim:vim"
+      "run:mise:curl https://mise.run | sh"
+      "run:starship:curl -sS https://starship.rs/install.sh | sh"
+      "gui:flatpak:com.alacritty.Alacritty"
+      "gui:flatpak:com.visualstudio.code"
+      "run:docker:curl -fsSL https://get.docker.com | sh"
+      "gui:flatpak:org.mozilla.firefox"
+      "gui:flatpak:org.freedownloadmanager.Manager"
+      "gui:flatpak:io.mpv.Mpv"
+    )
+  elif [ -n "${OSX:-}" ]; then
+    PKGS=(
+      "cli:git:git"
+      "cli:bash:bash"
+      "cli:curl:curl"
+      "cli:wget:wget"
+      "cli:tmux:tmux"
+      "cli:ssh:openssh"
+      "cli:vim:vim"
+      "cli:mise:mise"
+      "cli:starship:starship"
+      "gui:brew:alacritty"
+      "gui:brew:visual-studio-code"
+      "gui:brew:docker"
+      "gui:brew:firefox"
+      "gui:brew:free-download-manager"
+      "gui:brew:mpv"
+    )
+  fi
+
   local item type command package
-  for item in "$@"; do
+  for item in "${PKGS[@]}"; do
     IFS=':' read -r type command package <<<"$item"
 
     if [ "$command" == "winget" ]; then
@@ -270,68 +337,7 @@ setup_alacritty() {
 }
 
 update
-if [ -n "${WINDOWS:-}" ]; then
-  install \
-    "cli:git:Git.Git" \
-    "cli:vim:vim.vim" \
-    "cli:wget:JernejSimoncic.Wget" \
-    "run:tmux:cp -Rf \"$DOTFILES/home/tmux/\"* /usr/bin/" \
-    "cli:mise:jdx.mise" \
-    "cli:ssh:Microsoft.OpenSSH.Beta" \
-    "cli:starship:Starship.Starship" \
-    "gui:winget:Alacritty.Alacritty" \
-    "gui:winget:Microsoft.VisualStudioCode" \
-    "gui:winget:Docker.DockerDesktop" \
-    "gui:winget:Mozilla.Firefox" \
-    "gui:winget:SoftDeluxe.FreeDownloadManager" \
-    "gui:winget:mpv.net"
-elif [ -n "${ANDROID:-}" ]; then
-  install \
-    "cli:git:git" \
-    "cli:vim:vim" \
-    "cli:bash:bash" \
-    "cli:curl:curl" \
-    "cli:wget:wget" \
-    "cli:tmux:tmux" \
-    "cli:mise:mise" \
-    "cli:ssh:openssh" \
-    "cli:starship:starship"
-elif [ -n "${LINUX:-}" ]; then
-  install \
-    "cli:git:git" \
-    "cli:bash:bash" \
-    "cli:curl:curl" \
-    "cli:wget:wget" \
-    "cli:tmux:tmux" \
-    "cli:ssh:openssh openssh-client" \
-    "cli:vim:vim" \
-    "run:mise:curl https://mise.run | sh" \
-    "run:starship:curl -sS https://starship.rs/install.sh | sh" \
-    "gui:flatpak:com.alacritty.Alacritty" \
-    "gui:flatpak:com.visualstudio.code" \
-    "run:docker:curl -fsSL https://get.docker.com | sh" \
-    "gui:flatpak:org.mozilla.firefox" \
-    "gui:flatpak:org.freedownloadmanager.Manager" \
-    "gui:flatpak:io.mpv.Mpv"
-elif [ -n "${OSX:-}" ]; then
-  install \
-    "cli:git:git" \
-    "cli:bash:bash" \
-    "cli:curl:curl" \
-    "cli:wget:wget" \
-    "cli:tmux:tmux" \
-    "cli:ssh:openssh" \
-    "cli:vim:vim" \
-    "cli:mise:mise" \
-    "cli:starship:starship" \
-    "gui:brew:alacritty" \
-    "gui:brew:visual-studio-code" \
-    "gui:brew:docker" \
-    "gui:brew:firefox" \
-    "gui:brew:free-download-manager" \
-    "gui:brew:mpv"
-fi
-
+install
 setup_home
 setup_fonts
 setup_docker
