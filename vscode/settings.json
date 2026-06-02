@@ -11,6 +11,7 @@
   // ======================================================
   "editor.tabSize": 2,
   "prettier.tabWidth": 2,
+  "prettier.printWidth": 150,
   "editor.formatOnSave": true,
   "editor.detectIndentation": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
