@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOTFILES=$(dirname "$(pwd)/$0")
+export DOTFILES=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 copy() {
   local SRC=$1
@@ -27,23 +27,10 @@ render() {
   awk -f "$DOTFILES/render.awk" "$SRC" >"$DEST"
 }
 
-linux() {
-  if command -v apt >/dev/null 2>&1; then
-    apt install -y "$@"
-  elif command -v dnf >/dev/null 2>&1; then
-    dnf install -y "$@"
-  elif command -v yum >/dev/null 2>&1; then
-    yum install -y "$@"
-  elif command -v pacman >/dev/null 2>&1; then
-    pacman -S --noconfirm "$@"
-  elif command -v zypper >/dev/null 2>&1; then
-    zypper install -y "$@"
-  fi
-}
-
-install() {
+update() {
   if command -v winget >/dev/null 2>&1; then
     export WINDOWS=1
+    export DESKTOP=1
     winget source update
     powershell -NoProfile -Command "[Environment]::SetEnvironmentVariable('MSYS2_PATH_TYPE', 'inherit', 'User')"
   elif command -v termux-info >/dev/null 2>&1; then
@@ -53,31 +40,38 @@ install() {
     export LINUX=1
     if command -v apt >/dev/null 2>&1; then
       apt update -y
-      if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
-        apt install -y flatpak
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+      if [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
+        export DESKTOP=1
+        if ! command -v flatpak >/dev/null 2>&1; then
+          apt install -y flatpak
+          flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+        fi
       fi
     elif command -v dnf >/dev/null 2>&1; then
       dnf makecache
       if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
+        export DESKTOP=1
         dnf install -y flatpak
         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       fi
     elif command -v yum >/dev/null 2>&1; then
       yum makecache
       if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
+        export DESKTOP=1
         yum install -y flatpak
         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       fi
     elif command -v pacman >/dev/null 2>&1; then
       pacman -Sy
       if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
+        export DESKTOP=1
         pacman -S --noconfirm flatpak
         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       fi
     elif command -v zypper >/dev/null 2>&1; then
       zypper refresh
       if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
+        export DESKTOP=1
         zypper install -y flatpak
         flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       fi
@@ -87,6 +81,7 @@ install() {
     fi
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
     export OSX=1
+    export DESKTOP=1
     if ! command -v brew >/dev/null 2>&1; then
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
@@ -96,312 +91,152 @@ install() {
   fi
 }
 
-install_bash() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! command -v git >/dev/null 2>&1; then
-      echo "Git not found. Installing Git..."
-      winget install -e --disable-interactivity Git.Git
-    fi
-    if ! command -v wget >/dev/null 2>&1; then
-      echo "Wget not found. Installing Wget..."
-      winget install -e --disable-interactivity JernejSimoncic.Wget
-    fi
-  elif command -v termux-info >/dev/null 2>&1; then
-    if ! command -v git >/dev/null 2>&1; then
-      echo "Git not found. Installing Git..."
-      pkg install -y git
-    fi
-    if ! command -v bash >/dev/null 2>&1; then
-      echo "Bash not found. Installing Bash..."
-      pkg install -y bash
-    fi
-    if ! command -v curl >/dev/null 2>&1; then
-      echo "Curl not found. Installing Curl..."
-      pkg install -y curl
-    fi
-    if ! command -v wget >/dev/null 2>&1; then
-      echo "Wget not found. Installing Wget..."
-      pkg install -y wget
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
-    if ! command -v git >/dev/null 2>&1; then
-      echo "Git not found. Installing Git..."
-      linux git
-    fi
-    if ! command -v bash >/dev/null 2>&1; then
-      echo "Bash not found. Installing Bash..."
-      linux bash
-    fi
-    if ! command -v curl >/dev/null 2>&1; then
-      echo "Curl not found. Installing Curl..."
-      linux curl
-    fi
-    if ! command -v wget >/dev/null 2>&1; then
-      echo "Wget not found. Installing Wget..."
-      linux wget
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
-    if ! command -v git >/dev/null 2>&1; then
-      echo "Git not found. Installing Git..."
-      brew install git
-    fi
-    if ! command -v bash >/dev/null 2>&1; then
-      echo "Bash not found. Installing Bash..."
-      brew install bash
-    fi
-    if ! command -v curl >/dev/null 2>&1; then
-      echo "Curl not found. Installing Curl..."
-      brew install curl
-    fi
-    if ! command -v wget >/dev/null 2>&1; then
-      echo "Wget not found. Installing Wget..."
-      brew install wget
-    fi
-  else
-    echo "Unsupported OS for Bash installation"
-    return
-  fi
+install() {
+  local item type command package
+  for item in "$@"; do
+    IFS=':' read -r type command package <<<"$item"
 
-  link "$DOTFILES/bash/.bashrc" "$HOME/.bashrc"
-  link "$DOTFILES/bash/.profile" "$HOME/.profile"
-  link "$DOTFILES/bash/.profile" "$HOME/.zprofile"
-  link "$DOTFILES/bash/.gitconfig" "$HOME/.gitconfig"
+    if [ "$command" == "winget" ]; then
+      if winget list --id "$package" >/dev/null 2>&1; then
+        echo "$package is already installed"
+        continue
+      fi
+    elif [ "$command" == "flatpak" ]; then
+      if flatpak info "$package" >/dev/null 2>&1; then
+        echo "$package is already installed"
+        continue
+      fi
+    elif [ "$command" == "brew" ]; then
+      if brew list --cask "$package" >/dev/null 2>&1; then
+        echo "$package is already installed"
+        continue
+      fi
+    else
+      if command -v "$command" >/dev/null 2>&1; then
+        echo "$package is already installed"
+        continue
+      fi
+    fi
+
+    if [ "$type" == "run" ]; then
+      echo "Installing $command by running: $package"
+      eval "$package"
+    elif [ "$type" == "gui" ]; then
+      if comamnd -v winget >/dev/null 2>&1; then
+        echo "Installing $package using winget"
+        winget install -e --disable-interactivity "$package"
+      elif command -v flatpak >/dev/null 2>&1; then
+        echo "Installing $package using flatpak"
+        flatpak install -y flathub "$package"
+      elif command -v brew >/dev/null 2>&1; then
+        echo "Installing $package using brew"
+        brew install --cask "$package"
+      else
+        echo "Unsupported installation"
+        continue
+      fi
+    elif [ "$type" == "cli" ]; then
+      if command -v winget >/dev/null 2>&1; then
+        echo "Installing $package using winget"
+        winget install -e --disable-interactivity "$package"
+      elif command -v pkg >/dev/null 2>&1; then
+        echo "Installing $package using pkg"
+        pkg install -y "$package"
+      elif command -v apt >/dev/null 2>&1; then
+        echo "Installing $package using apt"
+        apt install -y "$package"
+      elif command -v dnf >/dev/null 2>&1; then
+        echo "Installing $package using dnf"
+        dnf install -y "$package"
+      elif command -v yum >/dev/null 2>&1; then
+        echo "Installing $package using yum"
+        yum install -y "$package"
+      elif command -v pacman >/dev/null 2>&1; then
+        echo "Installing $package using pacman"
+        pacman -S --noconfirm "$package"
+      elif command -v zypper >/dev/null 2>&1; then
+        echo "Installing $package using zypper"
+        zypper install -y "$package"
+      elif command -v brew >/dev/null 2>&1; then
+        echo "Installing $package using brew"
+        brew install "$package"
+      else
+        echo "Unsupported installation"
+        continue
+      fi
+    else
+      echo "Unsupported installation type: $type"
+      continue
+    fi
+  done
+}
+
+setup_home() {
+  link "$DOTFILES/home/.vimrc" "$HOME/.vimrc"
+  link "$DOTFILES/home/.bashrc" "$HOME/.bashrc"
+  link "$DOTFILES/home/.profile" "$HOME/.profile"
+  link "$DOTFILES/home/.profile" "$HOME/.zprofile"
+  link "$DOTFILES/home/.gitconfig" "$HOME/.gitconfig"
+  render "$DOTFILES/home/.tmux.conf" "$HOME/.tmux.conf"
+  link "$DOTFILES/home/mise.toml" "$HOME/.config/mise/mise.toml"
+  link "$DOTFILES/home/starship.toml" "$HOME/.config/starship.toml"
+  git clone https://github.com/morhetz/gruvbox.git "$HOME/.vim" || true
+  mise install -y
+
   if [ ! -f "$HOME/.gitconfig.local" ]; then
     touch "$HOME/.gitconfig.local"
   fi
-}
-
-install_tmux() {
-  if command -v winget >/dev/null 2>&1; then
-    PLATFORM="windows"
-    if ! command -v tmux >/dev/null 2>&1; then
-      echo "Tmux not found. Installing Tmux..."
-      cp -Rf "$DOTFILES/tmux/windows/"* /usr/bin/
-    fi
-  elif command -v termux-info >/dev/null 2>&1; then
-    PLATFORM="android"
-    if ! command -v tmux >/dev/null 2>&1; then
-      echo "Tmux not found. Installing Tmux..."
-      pkg install -y tmux
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
-    PLATFORM="linux"
-    if ! command -v tmux >/dev/null 2>&1; then
-      echo "Tmux not found. Installing Tmux..."
-      install tmux
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
-    PLATFORM="osx"
-    if ! command -v tmux >/dev/null 2>&1; then
-      echo "Tmux not found. Installing Tmux..."
-      brew install tmux
-    fi
-  else
-    echo "Unsupported OS for Tmux installation"
-    return
-  fi
-
-  render "$DOTFILES/tmux/tmux.conf" "$HOME/.tmux.conf"
-}
-
-install_mise() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! command -v mise >/dev/null 2>&1; then
-      echo "Mise not found. Installing Mise..."
-      winget install -e --disable-interactivity jdx.mise
-    fi
-  elif command -v termux-info >/dev/null 2>&1; then
-    echo "Mise installation not supported in Termux yet"
-    return
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
-    if ! command -v mise >/dev/null 2>&1; then
-      echo "Mise not found. Installing Mise..."
-      curl https://mise.run | sh
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
-    if ! command -v mise >/dev/null 2>&1; then
-      echo "Mise not found. Installing Mise..."
-      brew install mise
-    fi
-  else
-    echo "Unsupported OS for Mise installation"
-    return
-  fi
-
-  link "$DOTFILES/mise/mise.toml" "$HOME/.config/mise/mise.toml"
-  mise install -y
-}
-
-install_ssh() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! command -v ssh >/dev/null 2>&1; then
-      echo "OpenSSH not found. Installing OpenSSH..."
-      winget install -e --disable-interactivity Microsoft.OpenSSH.Beta
-    fi
-  elif command -v termux-info >/dev/null 2>&1; then
-    if ! command -v ssh >/dev/null 2>&1; then
-      echo "OpenSSH not found. Installing OpenSSH..."
-      pkg install -y openssh
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
-    if ! command -v ssh >/dev/null 2>&1; then
-      echo "OpenSSH not found. Installing OpenSSH..."
-      linux openssh openssh-client
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
-    if ! command -v ssh >/dev/null 2>&1; then
-      echo "OpenSSH not found. Installing OpenSSH..."
-      brew install openssh
-    fi
-  else
-    echo "Unsupported OS for OpenSSH installation"
-    return
-  fi
-
   if [ ! -f "$HOME/.ssh/id_rsa" ]; then
-    echo "OpenSSH key not found. Generating OpenSSH key..."
-    ssh-keygen -t rsa -b 4096 -C "$(git config --global user.email)" -f "$HOME/.ssh/id_rsa" -N ""
+    ssh-keygen -t rsa -b 4096 -C "$(hostname)" -f "$HOME/.ssh/id_rsa" -N ""
   fi
 }
 
-install_vim() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! command -v vim >/dev/null 2>&1; then
-      echo "Vim not found. Installing Vim..."
-      winget install -e --disable-interactivity vim.vim
-    fi
-  elif command -v termux-info >/dev/null 2>&1; then
-    if ! command -v vim >/dev/null 2>&1; then
-      echo "Vim not found. Installing Vim..."
-      pkg install -y vim
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
-    if ! command -v vim >/dev/null 2>&1; then
-      echo "Vim not found. Installing Vim..."
-      linux vim
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
-    if ! command -v vim >/dev/null 2>&1; then
-      echo "Vim not found. Installing Vim..."
-      brew install vim
-    fi
-  else
-    echo "Unsupported OS for Vim installation"
-    return
-  fi
-
-  link "$DOTFILES/vim/.vimrc" "$HOME/.vimrc"
-  git clone https://github.com/morhetz/gruvbox.git "$HOME/.vim" || true
-}
-
-install_fonts() {
-  if command -v winget >/dev/null 2>&1; then
+setup_fonts() {
+  if [ -n "${WINDOWS:-}" ]; then
     for font in "$DOTFILES/fonts/"*.ttf; do
       copy "$font" "/c/Windows/Fonts/$(basename "$font")"
     done
-  elif command -v termux-info >/dev/null 2>&1; then
+  elif [ -n "${ANDROID:-}" ]; then
     copy "$DOTFILES/fonts/MesloLGMNerdFont-Regular.ttf" "$HOME/.termux/font.ttf"
     termux-reload-settings
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
+  elif [ -n "${LINUX:-}" ]; then
     for font in "$DOTFILES/fonts/"*.ttf; do
       copy "$font" "$HOME/.local/share/fonts/$(basename "$font")"
     done
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
+  elif [ -n "${OSX:-}" ]; then
     for font in "$DOTFILES/fonts/"*.ttf; do
       copy "$font" "/Library/Fonts/$(basename "$font")"
     done
   else
-    echo "Unsupported OS for Fonts installation"
+    echo "Unsupported OS for Fonts setup"
     return
   fi
 }
 
-install_starship() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! command -v starship >/dev/null 2>&1; then
-      echo "Starship not found. Installing Starship..."
-      winget install -e --disable-interactivity Starship.Starship
-    fi
-  elif command -v termux-info >/dev/null 2>&1; then
-    if ! command -v starship >/dev/null 2>&1; then
-      echo "Starship not found. Installing Starship..."
-      pkg install -y starship
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
-    if ! command -v starship >/dev/null 2>&1; then
-      echo "Starship not found. Installing Starship..."
-      curl -sS https://starship.rs/install.sh | sh
-    fi
-  elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]]; then
-    if ! command -v starship >/dev/null 2>&1; then
-      echo "Starship not found. Installing Starship..."
-      brew install starship
-    fi
+setup_docker() {
+  if [ -n "${WINDOWS:-}" ]; then
+    DOCKER_HOME="$HOME/.docker"
+  elif [ -n "${LINUX:-}" ]; then
+    DOCKER_HOME="/etc/docker"
+  elif [ -n "${OSX:-}" ]; then
+    DOCKER_HOME="$HOME/.docker"
   else
-    echo "Unsupported OS for Starship installation"
+    echo "Unsupported OS for Docker setup"
     return
   fi
 
-  link "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml"
+  copy "$DOTFILES/docker/daemon.json" "$DOCKER_HOME/daemon.json"
 }
 
-install_alacritty() {
-  if command -v winget >/dev/null 2>&1; then
-    PLATFORM="windows"
-    ALACRITTY_HOME="$HOME/AppData/Roaming/alacritty"
-    if ! command -v alacritty >/dev/null 2>&1; then
-      echo "Alacritty not found. Installing Alacritty..."
-      winget install -e --disable-interactivity Alacritty.Alacritty
-      powershell -NoProfile -Command '$lnk="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Alacritty\Alacritty.lnk"; $ws=New-Object -ComObject WScript.Shell; $sc=$ws.CreateShortcut($lnk); $sc.WorkingDirectory=$env:USERPROFILE; $sc.Save()'
-    fi
-  elif command -v flatpak >/dev/null 2>&1; then
-    PLATFORM="linux"
-    ALACRITTY_HOME="$HOME/.var/app/com.alacritty.Alacritty/config/alacritty"
-    if ! command -v alacritty >/dev/null 2>&1; then
-      echo "Alacritty not found. Installing Alacritty..."
-      flatpak install -y flathub com.alacritty.Alacritty
-    fi
-  elif command -v brew >/dev/null 2>&1; then
-    PLATFORM="osx"
-    ALACRITTY_HOME="$HOME/.config/alacritty"
-    if ! command -v alacritty >/dev/null 2>&1; then
-      echo "Alacritty not found. Installing Alacritty..."
-      brew install --cask alacritty
-      xattr -dr com.apple.quarantine /Applications/Alacritty.app
-    fi
-  else
-    echo "Unsupported OS for Alacritty installation"
-    return
-  fi
-
-  render "$DOTFILES/alacritty/alacritty.toml.tpl" "$ALACRITTY_HOME/alacritty.toml"
-  read rows columns < <(alacritty -v -o 'window.startup_mode="Maximized"' -e echo | awk '/PTY dimensions:/{print $7, $9}') && lines=$(($rows * 2 / 3))
-  sed -i.bak -e "s/lines = 0/lines = $lines/" -e "s/columns = 0/columns = $columns/" "$ALACRITTY_HOME/alacritty.toml" && rm "$ALACRITTY_HOME/alacritty.toml.bak"
-  # TODO: Add Alacritty toggle hotkey setup (on-boot => first run)
-}
-
-install_vscode() {
-  if command -v winget >/dev/null 2>&1; then
+setup_vscode() {
+  if [ -n "${WINDOWS:-}" ]; then
     VSCODE_HOME="$HOME/AppData/Roaming/Code/User"
-    if ! command -v code >/dev/null 2>&1; then
-      echo "VSCode not found. Installing VSCode..."
-      winget install -e --disable-interactivity Microsoft.VisualStudioCode
-    fi
-  elif command -v flatpak >/dev/null 2>&1; then
+  elif [ -n "${LINUX:-}" ]; then
     VSCODE_HOME="$HOME/.var/app/com.visualstudio.code/config/Code/User"
-    if ! command -v code >/dev/null 2>&1; then
-      echo "VSCode not found. Installing VSCode..."
-      flatpak install -y flathub com.visualstudio.code
-    fi
-  elif command -v brew >/dev/null 2>&1; then
+  elif [ -n "${OSX:-}" ]; then
     VSCODE_HOME="$HOME/Library/Application Support/Code/User"
-    if ! command -v code >/dev/null 2>&1; then
-      echo "VSCode not found. Installing VSCode..."
-      brew install --cask visual-studio-code
-      xattr -dr com.apple.quarantine /Applications/Visual\ Studio\ Code.app
-    fi
   else
-    echo "Unsupported OS for VSCode installation"
+    echo "Unsupported OS for VSCode setup"
     return
   fi
 
@@ -415,140 +250,90 @@ install_vscode() {
   fi
 }
 
-install_docker() {
-  if command -v winget >/dev/null 2>&1; then
-    DOCKER_HOME="$HOME/.docker"
-    if ! command -v docker >/dev/null 2>&1; then
-      echo "Docker not found. Installing Docker..."
-      winget install -e --disable-interactivity Docker.DockerDesktop
-    fi
-  elif command -v flatpak >/dev/null 2>&1; then
-    DOCKER_HOME="/etc/docker"
-    if ! command -v docker >/dev/null 2>&1; then
-      echo "Docker not found. Installing Docker..."
-      curl -fsSL https://get.docker.com | sh
-    fi
-  elif command -v brew >/dev/null 2>&1; then
-    DOCKER_HOME="$HOME/.docker"
-    if ! command -v docker >/dev/null 2>&1; then
-      echo "Docker not found. Installing Docker..."
-      brew install --cask docker
-      # xattr -dr com.apple.quarantine /Applications/Docker.app
-    fi
+setup_alacritty() {
+  if [ -n "${WINDOWS:-}" ]; then
+    ALACRITTY_HOME="$HOME/AppData/Roaming/alacritty"
+    powershell -NoProfile -Command '$lnk="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Alacritty\Alacritty.lnk"; $ws=New-Object -ComObject WScript.Shell; $sc=$ws.CreateShortcut($lnk); $sc.WorkingDirectory=$env:USERPROFILE; $sc.Save()'
+  elif [ -n "${LINUX:-}" ]; then
+    ALACRITTY_HOME="$HOME/.var/app/com.alacritty.Alacritty/config/alacritty"
+  elif [ -n "${OSX:-}" ]; then
+    ALACRITTY_HOME="$HOME/.config/alacritty"
   else
-    echo "Unsupported OS for Docker installation"
+    echo "Unsupported OS for Alacritty setup"
     return
   fi
 
-  copy "$DOTFILES/docker/daemon.json" "$DOCKER_HOME/daemon.json"
+  render "$DOTFILES/alacritty/alacritty.toml.tpl" "$ALACRITTY_HOME/alacritty.toml"
+  read rows columns < <(alacritty -v -o 'window.startup_mode="Maximized"' -e echo | awk '/PTY dimensions:/{print $7, $9}') && lines=$(($rows * 2 / 3))
+  sed -i.bak -e "s/lines = 0/lines = $lines/" -e "s/columns = 0/columns = $columns/" "$ALACRITTY_HOME/alacritty.toml" && rm "$ALACRITTY_HOME/alacritty.toml.bak"
+  # TODO: Add Alacritty toggle hotkey setup (on-boot => first run)
 }
 
-install_chrome() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! winget list --id Google.Chrome >/dev/null 2>&1; then
-      echo "Chrome not found. Installing Chrome..."
-      winget install -e --disable-interactivity Google.Chrome
-    fi
-  elif command -v flatpak >/dev/null 2>&1; then
-    if ! flatpak info com.google.Chrome >/dev/null 2>&1; then
-      echo "Chrome not found. Installing Chrome..."
-      flatpak install -y flathub com.google.Chrome
-    fi
-  elif command -v brew >/dev/null 2>&1; then
-    if ! brew list --cask google-chrome >/dev/null 2>&1; then
-      echo "Chrome not found. Installing Chrome..."
-      brew install --cask google-chrome
-      xattr -dr com.apple.quarantine /Applications/Google\ Chrome.app
-    fi
-  else
-    echo "Unsupported OS for Chrome installation"
-    return
-  fi
-}
+update
+if [ -n "${WINDOWS:-}" ]; then
+  install \
+    "cli:git:Git.Git" \
+    "cli:vim:vim.vim" \
+    "cli:wget:JernejSimoncic.Wget" \
+    "run:tmux:cp -Rf \"$DOTFILES/home/tmux/\"* /usr/bin/" \
+    "cli:mise:jdx.mise" \
+    "cli:ssh:Microsoft.OpenSSH.Beta" \
+    "cli:starship:Starship.Starship" \
+    "gui:winget:Alacritty.Alacritty" \
+    "gui:winget:Microsoft.VisualStudioCode" \
+    "gui:winget:Docker.DockerDesktop" \
+    "gui:winget:Mozilla.Firefox" \
+    "gui:winget:SoftDeluxe.FreeDownloadManager" \
+    "gui:winget:mpv.net"
+elif [ -n "${ANDROID:-}" ]; then
+  install \
+    "cli:git:git" \
+    "cli:vim:vim" \
+    "cli:bash:bash" \
+    "cli:curl:curl" \
+    "cli:wget:wget" \
+    "cli:tmux:tmux" \
+    "cli:mise:mise" \
+    "cli:ssh:openssh" \
+    "cli:starship:starship"
+elif [ -n "${LINUX:-}" ]; then
+  install \
+    "cli:git:git" \
+    "cli:bash:bash" \
+    "cli:curl:curl" \
+    "cli:wget:wget" \
+    "cli:tmux:tmux" \
+    "cli:ssh:openssh openssh-client" \
+    "cli:vim:vim" \
+    "run:mise:curl https://mise.run | sh" \
+    "run:starship:curl -sS https://starship.rs/install.sh | sh" \
+    "gui:flatpak:com.alacritty.Alacritty" \
+    "gui:flatpak:com.visualstudio.code" \
+    "run:docker:curl -fsSL https://get.docker.com | sh" \
+    "gui:flatpak:org.mozilla.firefox" \
+    "gui:flatpak:org.freedownloadmanager.Manager" \
+    "gui:flatpak:io.mpv.Mpv"
+elif [ -n "${OSX:-}" ]; then
+  install \
+    "cli:git:git" \
+    "cli:bash:bash" \
+    "cli:curl:curl" \
+    "cli:wget:wget" \
+    "cli:tmux:tmux" \
+    "cli:ssh:openssh" \
+    "cli:vim:vim" \
+    "cli:mise:mise" \
+    "cli:starship:starship" \
+    "gui:brew:alacritty" \
+    "gui:brew:visual-studio-code" \
+    "gui:brew:docker" \
+    "gui:brew:firefox" \
+    "gui:brew:free-download-manager" \
+    "gui:brew:mpv"
+fi
 
-install_firefox() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! winget list --id Mozilla.Firefox >/dev/null 2>&1; then
-      echo "Firefox not found. Installing Firefox..."
-      winget install -e --disable-interactivity Mozilla.Firefox
-    fi
-  elif command -v flatpak >/dev/null 2>&1; then
-    if ! flatpak info org.mozilla.firefox >/dev/null 2>&1; then
-      echo "Firefox not found. Installing Firefox..."
-      flatpak install -y flathub org.mozilla.firefox
-    fi
-  elif command -v brew >/dev/null 2>&1; then
-    if ! brew list --cask firefox >/dev/null 2>&1; then
-      echo "Firefox not found. Installing Firefox..."
-      brew install --cask firefox
-      xattr -dr com.apple.quarantine /Applications/Firefox.app
-    fi
-  else
-    echo "Unsupported OS for Firefox installation"
-    return
-  fi
-}
-
-install_fdm() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! winget list --id SoftDeluxe.FreeDownloadManager >/dev/null 2>&1; then
-      echo "Free Download Manager not found. Installing Free Download Manager..."
-      winget install -e --disable-interactivity SoftDeluxe.FreeDownloadManager
-    fi
-  elif command -v flatpak >/dev/null 2>&1; then
-    if ! flatpak info org.freedownloadmanager.Manager >/dev/null 2>&1; then
-      echo "Free Download Manager not found. Installing Free Download Manager..."
-      flatpak install -y flathub org.freedownloadmanager.Manager
-    fi
-  elif command -v brew >/dev/null 2>&1; then
-    if ! brew list --cask free-download-manager >/dev/null 2>&1; then
-      echo "Free Download Manager not found. Installing Free Download Manager..."
-      brew install --cask free-download-manager
-      # xattr -dr com.apple.quarantine /Applications/Free\ Download\ Manager.app
-    fi
-  else
-    echo "Unsupported OS for Free Download Manager installation"
-    return
-  fi
-}
-
-install_mpv() {
-  if command -v winget >/dev/null 2>&1; then
-    if ! winget list --id mpv.net >/dev/null 2>&1; then
-      echo "MPV not found. Installing MPV..."
-      winget install -e --disable-interactivity mpv.net
-    fi
-  elif command -v flatpak >/dev/null 2>&1; then
-    if ! flatpak info io.mpv.Mpv >/dev/null 2>&1; then
-      echo "MPV not found. Installing MPV..."
-      flatpak install -y flathub io.mpv.Mpv
-    fi
-  elif command -v brew >/dev/null 2>&1; then
-    if ! brew list --cask mpv >/dev/null 2>&1; then
-      echo "MPV not found. Installing MPV..."
-      brew install --cask mpv
-      xattr -dr com.apple.quarantine /Applications/mpv.app
-    fi
-  else
-    echo "Unsupported OS for MPV installation"
-    return
-  fi
-}
-
-install
-install_bash
-install_tmux
-install_mise
-install_ssh
-install_vim
-install_fonts
-install_starship
-install_alacritty
-install_vscode
-install_docker
-install_chrome
-install_firefox
-install_fdm
-install_mpv
-
-echo "All installations completed."
+setup_home
+setup_fonts
+setup_docker
+setup_vscode
+setup_alacritty
