@@ -267,7 +267,7 @@ setup_home() {
   link "$DOTFILES/home/mise.toml" "$HOME/.config/mise/mise.toml"
   link "$DOTFILES/home/starship.toml" "$HOME/.config/starship.toml"
   git clone https://github.com/morhetz/gruvbox.git "$HOME/.vim" || true
-  mise install -y
+  mise install -y || true
 
   if [ ! -f "$HOME/.gitconfig.local" ]; then
     touch "$HOME/.gitconfig.local"

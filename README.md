@@ -12,32 +12,31 @@ First, install Git Bash:
 winget install -e --disable-interactivity Git.Git
 ```
 
-Now open your **Git Bash** shell in **Administrator** mode
+Now open your **Git Bash** shell in **Administrator** mode.
+
+---
+
+### Android Users
+
+<!-- TODO -->
 
 ---
 
 ### OSX Users
 
-To swap the Command (⌘) and Control (⌃) keys in macOS:
+To swap the Command and Control keys in OSX:
 
-1. Open **System Settings** (or **System Preferences** on older macOS versions)
-2. Navigate to **Keyboard**
-3. Click on **Modifier Keys...** button (usually at the bottom right)
-4. Select your keyboard from the dropdown menu
-5. Change the mappings:
-   - Set **Control (⌃) Key** to **⌘ Command**
-   - Set **Command (⌘) Key** to **^ Control**
-6. Click **OK** to save changes
-
-This is useful for users who want to maintain muscle memory from other operating systems or prefer different key combinations for common shortcuts.
+1. Open **System Settings**
+2. Go to **Keyboard**
+3. Open **Modifier Keys**
+4. Set **Control** to **Command**
+5. Set **Command** to **Control**
 
 ---
 
-### Installation (All Platforms)
+### Installation
 
 ```bash
 git clone https://github.com/ckoliber/dotfiles.git
 bash dotfiles/install.sh
 ```
-
----
