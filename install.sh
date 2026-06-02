@@ -177,17 +177,17 @@ install() {
     IFS=':' read -r type command package <<<"$item"
 
     if [ "$command" == "winget" ]; then
-      if winget list --id "$package" >/dev/null 2>&1; then
+      if winget list --id $package >/dev/null 2>&1; then
         echo "$package is already installed"
         continue
       fi
     elif [ "$command" == "flatpak" ]; then
-      if flatpak info "$package" >/dev/null 2>&1; then
+      if flatpak info $package >/dev/null 2>&1; then
         echo "$package is already installed"
         continue
       fi
     elif [ "$command" == "brew" ]; then
-      if brew list --cask "$package" >/dev/null 2>&1; then
+      if brew list --cask $package >/dev/null 2>&1; then
         echo "$package is already installed"
         continue
       fi
@@ -202,15 +202,15 @@ install() {
       echo "Installing $command by running: $package"
       eval "$package"
     elif [ "$type" == "gui" ]; then
-      if comamnd -v winget >/dev/null 2>&1; then
+      if command -v winget >/dev/null 2>&1; then
         echo "Installing $package using winget"
-        winget install -e --disable-interactivity "$package"
+        winget install -e --disable-interactivity $package
       elif command -v flatpak >/dev/null 2>&1; then
         echo "Installing $package using flatpak"
-        flatpak install -y flathub "$package"
+        flatpak install -y flathub $package
       elif command -v brew >/dev/null 2>&1; then
         echo "Installing $package using brew"
-        brew install --cask "$package"
+        brew install --cask $package
       else
         echo "Unsupported installation"
         continue
@@ -218,28 +218,28 @@ install() {
     elif [ "$type" == "cli" ]; then
       if command -v winget >/dev/null 2>&1; then
         echo "Installing $package using winget"
-        winget install -e --disable-interactivity "$package"
+        winget install -e --disable-interactivity $package
       elif command -v pkg >/dev/null 2>&1; then
         echo "Installing $package using pkg"
-        pkg install -y "$package"
+        pkg install -y $package
       elif command -v apt >/dev/null 2>&1; then
         echo "Installing $package using apt"
-        apt install -y "$package"
+        apt install -y $package
       elif command -v dnf >/dev/null 2>&1; then
         echo "Installing $package using dnf"
-        dnf install -y "$package"
+        dnf install -y $package
       elif command -v yum >/dev/null 2>&1; then
         echo "Installing $package using yum"
-        yum install -y "$package"
+        yum install -y $package
       elif command -v pacman >/dev/null 2>&1; then
         echo "Installing $package using pacman"
-        pacman -S --noconfirm "$package"
+        pacman -S --noconfirm $package
       elif command -v zypper >/dev/null 2>&1; then
         echo "Installing $package using zypper"
-        zypper install -y "$package"
+        zypper install -y $package
       elif command -v brew >/dev/null 2>&1; then
         echo "Installing $package using brew"
-        brew install "$package"
+        brew install $package
       else
         echo "Unsupported installation"
         continue
