@@ -119,6 +119,7 @@ install() {
       "gui:winget:Microsoft.VisualStudioCode"
       "gui:winget:Docker.DockerDesktop"
       "gui:winget:Mozilla.Firefox"
+      "gui:winget:Bitwarden.Bitwarden"
       "gui:winget:SoftDeluxe.FreeDownloadManager"
       "gui:winget:mpv.net"
     )
@@ -149,6 +150,7 @@ install() {
       "gui:flatpak:com.visualstudio.code"
       "run:docker:curl -fsSL https://get.docker.com | sh"
       "gui:flatpak:org.mozilla.firefox"
+      "gui:flatpak:com.bitwarden.desktop"
       "gui:flatpak:org.freedownloadmanager.Manager"
       "gui:flatpak:io.mpv.Mpv"
     )
@@ -167,6 +169,7 @@ install() {
       "gui:brew:visual-studio-code"
       "gui:brew:docker"
       "gui:brew:firefox"
+      "gui:brew:bitwarden"
       "gui:brew:free-download-manager"
       "gui:brew:mpv"
     )
