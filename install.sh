@@ -217,6 +217,8 @@ install() {
       elif command -v brew >/dev/null 2>&1; then
         echo "Installing $package using brew"
         brew install --cask $package
+        app=$(find /Applications -maxdepth 1 -iname "${package//-/ }.app" -print -quit)
+        [ -n "$app" ] && xattr -r -d com.apple.quarantine "$app" 2>/dev/null || true
       else
         echo "Unsupported installation"
         continue
@@ -350,7 +352,7 @@ setup_firefox() {
 
   for profile in "$FIREFOX_HOME/"*; do
     if [ -d "$profile" ] && [ -f "$profile/prefs.js" ]; then
-      render "$DOTFILES/firefox/user.js.tpl" "$profile/user.js"
+      render "$DOTFILES/firefox/user.js" "$profile/user.js"
     fi
   done
 }
@@ -382,3 +384,4 @@ setup_docker
 setup_vscode
 setup_firefox
 setup_alacritty
+echo "Installation and setup complete!"
