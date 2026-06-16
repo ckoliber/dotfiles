@@ -105,6 +105,7 @@ update() {
 }
 
 install() {
+  # TOOD: add xournal++
   local PKGS=()
   if [ -n "${WINDOWS:-}" ]; then
     PKGS=(
@@ -116,7 +117,7 @@ install() {
       "cli:ssh:Microsoft.OpenSSH.Beta"
       "cli:starship:Starship.Starship"
       "gui:winget:Alacritty.Alacritty"
-      "gui:winget:Microsoft.VisualStudioCode"
+      "gui:winget:VSCodium.VSCodium"
       "gui:winget:Docker.DockerDesktop"
       "gui:winget:Mozilla.Firefox"
       "gui:winget:Mozilla.Thunderbird"
@@ -148,7 +149,7 @@ install() {
       "run:mise:curl https://mise.run | sh"
       "run:starship:curl -sS https://starship.rs/install.sh | sh"
       "gui:flatpak:com.alacritty.Alacritty"
-      "gui:flatpak:com.visualstudio.code"
+      "gui:flatpak:com.vscodium.codium"
       "run:docker:curl -fsSL https://get.docker.com | sh"
       "gui:flatpak:org.mozilla.firefox"
       "gui:flatpak:org.mozilla.thunderbird"
@@ -168,7 +169,7 @@ install() {
       "cli:mise:mise"
       "cli:starship:starship"
       "gui:brew:alacritty"
-      "gui:brew:visual-studio-code"
+      "gui:brew:vscodium"
       "gui:brew:docker"
       "gui:brew:firefox"
       "gui:brew:thunderbird"
@@ -316,15 +317,15 @@ setup_docker() {
   copy "$DOTFILES/docker/daemon.json" "$DOCKER_HOME/daemon.json"
 }
 
-setup_vscode() {
+setup_codium() {
   if [ -n "${WINDOWS:-}" ]; then
-    VSCODE_HOME="$HOME/AppData/Roaming/Code/User"
+    VSCODE_HOME="$HOME/AppData/Roaming/VSCodium/User"
   elif [ -n "${LINUX:-}" ]; then
-    VSCODE_HOME="$HOME/.var/app/com.visualstudio.code/config/Code/User"
+    VSCODE_HOME="$HOME/.var/app/com.visualstudio.code/config/VSCodium/User"
   elif [ -n "${OSX:-}" ]; then
-    VSCODE_HOME="$HOME/Library/Application Support/Code/User"
+    VSCODE_HOME="$HOME/Library/Application Support/VSCodium/User"
   else
-    echo "Unsupported OS for VSCode setup"
+    echo "Unsupported OS for VSCodium setup"
     return
   fi
 
@@ -333,7 +334,7 @@ setup_vscode() {
   if [ ! -f "$VSCODE_HOME/extensions.txt" ]; then
     link "$DOTFILES/vscode/extensions.txt" "$VSCODE_HOME/extensions.txt"
     sed 's/\r$//' "$VSCODE_HOME/extensions.txt" | while read -r extension; do
-      code --install-extension "$extension"
+      codium --install-extension "$extension"
     done
   fi
 }
@@ -381,7 +382,7 @@ install
 setup_home
 setup_fonts
 setup_docker
-setup_vscode
+setup_codium
 setup_firefox
 setup_alacritty
 echo "Installation and setup complete!"

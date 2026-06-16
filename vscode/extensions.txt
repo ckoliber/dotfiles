@@ -1,7 +1,5 @@
 esbenp.prettier-vscode
 foxundermoon.shell-format
-github.copilot
-github.copilot-chat
 gitlab.gitlab-workflow
 golang.go
 grafana.grafana-alloy

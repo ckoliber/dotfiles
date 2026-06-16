@@ -35,8 +35,8 @@
   "terminal.integrated.profiles.windows": {
     "bash": {
       "path": "C:\\Program Files\\Git\\bin\\bash.exe",
-      "args": ["-l"]
-    }
+      "args": ["-l"],
+    },
   },
 
   // ======================================================
@@ -46,8 +46,8 @@
   "terminal.integrated.profiles.linux": {
     "bash": {
       "path": "/usr/bin/bash",
-      "args": ["-l"]
-    }
+      "args": ["-l"],
+    },
   },
 
   // ======================================================
@@ -57,8 +57,8 @@
   "terminal.integrated.profiles.osx": {
     "bash": {
       "path": "/opt/homebrew/bin/bash",
-      "args": ["-l"]
-    }
+      "args": ["-l"],
+    },
   },
 
   // ======================================================
@@ -81,34 +81,37 @@
   // Language-specific formatters
   // ======================================================
   "[terraform]": {
-    "editor.defaultFormatter": "hashicorp.terraform"
+    "editor.defaultFormatter": "hashicorp.terraform",
   },
   "[terraform-vars]": {
-    "editor.defaultFormatter": "hashicorp.terraform"
+    "editor.defaultFormatter": "hashicorp.terraform",
   },
   "[hcl]": {
-    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+    "editor.defaultFormatter": "jkillian.custom-local-formatters",
   },
   "[grafana-alloy]": {
-    "editor.defaultFormatter": "Grafana.grafana-alloy"
+    "editor.defaultFormatter": "Grafana.grafana-alloy",
   },
   "[jsonnet]": {
-    "editor.defaultFormatter": "Grafana.vscode-jsonnet"
+    "editor.defaultFormatter": "Grafana.vscode-jsonnet",
   },
   "[go]": {
-    "editor.defaultFormatter": "golang.go"
+    "editor.defaultFormatter": "golang.go",
   },
   "[go.mod]": {
-    "editor.defaultFormatter": "golang.go"
+    "editor.defaultFormatter": "golang.go",
   },
   "[go.sum]": {
-    "editor.defaultFormatter": "golang.go"
+    "editor.defaultFormatter": "golang.go",
   },
   "[shellscript]": {
-    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode"
+    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode",
   },
   "[toml]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml"
+    "editor.defaultFormatter": "tamasfe.even-better-toml",
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8",
   },
 
   // ======================================================
@@ -117,7 +120,13 @@
   "customLocalFormatters.formatters": [
     {
       "command": "terragrunt hcl format --stdin",
-      "languages": ["hcl"]
-    }
-  ]
+      "languages": ["hcl"],
+    },
+  ],
+  "workbench.editor.empty.hint": "hidden",
+  "terminal.integrated.scrollback": 100000,
+  "terminal.integrated.initialHint": false,
+  "python.terminal.activateEnvironment": false,
+  "python.terminal.activateEnvInCurrentTerminal": false,
+  "telemetry.telemetryLevel": "all",
 }
