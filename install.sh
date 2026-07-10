@@ -117,12 +117,10 @@ install() {
       "cli:ssh:Microsoft.OpenSSH.Beta"
       "cli:starship:Starship.Starship"
       "gui:winget:Alacritty.Alacritty"
+      "gui:winget:Bitwarden.Bitwarden"
       "gui:winget:VSCodium.VSCodium"
       "gui:winget:Docker.DockerDesktop"
-      "gui:winget:Mozilla.Firefox"
-      "gui:winget:Mozilla.Thunderbird"
-      "gui:winget:Bitwarden.Bitwarden"
-      "gui:winget:SoftDeluxe.FreeDownloadManager"
+      "gui:winget:Brave.Brave"
       "gui:winget:mpv.net"
     )
   elif [ -n "${ANDROID:-}" ]; then
@@ -149,12 +147,10 @@ install() {
       "run:mise:curl https://mise.run | sh"
       "run:starship:curl -sS https://starship.rs/install.sh | sh"
       "gui:flatpak:com.alacritty.Alacritty"
+      "gui:flatpak:com.bitwarden.desktop"
       "gui:flatpak:com.vscodium.codium"
       "run:docker:curl -fsSL https://get.docker.com | sh"
-      "gui:flatpak:org.mozilla.firefox"
-      "gui:flatpak:org.mozilla.thunderbird"
-      "gui:flatpak:com.bitwarden.desktop"
-      "gui:flatpak:org.freedownloadmanager.Manager"
+      "gui:flatpak:com.brave.Browser"
       "gui:flatpak:io.mpv.Mpv"
     )
   elif [ -n "${OSX:-}" ]; then
@@ -169,12 +165,10 @@ install() {
       "cli:mise:mise"
       "cli:starship:starship"
       "gui:brew:alacritty"
+      "gui:brew:bitwarden"
       "gui:brew:vscodium"
       "gui:brew:docker"
-      "gui:brew:firefox"
-      "gui:brew:thunderbird"
-      "gui:brew:bitwarden"
-      "gui:brew:free-download-manager"
+      "gui:brew:brave-browser"
       "gui:brew:mpv"
     )
   fi
@@ -339,25 +333,6 @@ setup_codium() {
   fi
 }
 
-setup_firefox() {
-  if [ -n "${WINDOWS:-}" ]; then
-    FIREFOX_HOME="$HOME/AppData/Roaming/Mozilla/Firefox/Profiles"
-  elif [ -n "${LINUX:-}" ]; then
-    FIREFOX_HOME="$HOME/.mozilla/firefox"
-  elif [ -n "${OSX:-}" ]; then
-    FIREFOX_HOME="$HOME/Library/Application Support/Firefox/Profiles"
-  else
-    echo "Unsupported OS for Firefox setup"
-    return
-  fi
-
-  for profile in "$FIREFOX_HOME/"*; do
-    if [ -d "$profile" ] && [ -f "$profile/prefs.js" ]; then
-      render "$DOTFILES/firefox/user.js" "$profile/user.js"
-    fi
-  done
-}
-
 setup_alacritty() {
   if [ -n "${WINDOWS:-}" ]; then
     ALACRITTY_HOME="$HOME/AppData/Roaming/alacritty"
@@ -383,6 +358,5 @@ setup_home
 setup_fonts
 setup_docker
 setup_codium
-setup_firefox
 setup_alacritty
 echo "Installation and setup complete!"

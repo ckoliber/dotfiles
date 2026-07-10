@@ -1,9 +1,14 @@
+[env]
+SOPS_AGE_KEY_FILE = "{{ env.HOME }}/.config/sops/age.txt"
+
 [tools]
 jq = "1.8.1"
 yq = "4.52.4"
 gh = "2.92.0"
 glab = "1.97.0"
 shfmt = "3.13.1"
+claude = "2.1.195"
+opencode = "1.17.9"
 docker-cli = "29.3.0"
 kubelogin = "1.36.1"
 talosctl = "1.12.6"
