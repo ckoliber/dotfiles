@@ -32,6 +32,10 @@
   // Integrated terminal (Windows)
   // ======================================================
   "terminal.integrated.defaultProfile.windows": "bash",
+  "terminal.integrated.automationProfile.windows": {
+    "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+    "args": ["-l"]
+  },
   "terminal.integrated.profiles.windows": {
     "bash": {
       "path": "C:\\Program Files\\Git\\bin\\bash.exe",
@@ -43,6 +47,10 @@
   // Integrated terminal (Linux)
   // ======================================================
   "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.automationProfile.linux": {
+    "path": "/usr/bin/bash",
+    "args": ["-l"]
+  },
   "terminal.integrated.profiles.linux": {
     "bash": {
       "path": "/usr/bin/bash",
@@ -54,6 +62,10 @@
   // Integrated terminal (macOS)
   // ======================================================
   "terminal.integrated.defaultProfile.osx": "bash",
+  "terminal.integrated.automationProfile.osx": {
+    "path": "/opt/homebrew/bin/bash",
+    "args": ["-l"]
+  },
   "terminal.integrated.profiles.osx": {
     "bash": {
       "path": "/opt/homebrew/bin/bash",
@@ -73,12 +85,35 @@
   "go.toolsManagement.autoUpdate": true,
 
   // ======================================================
-  // GitHub Copilot
+  // Golang
   // ======================================================
-  "github.copilot.nextEditSuggestions.enabled": true,
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[go.mod]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[go.sum]": {
+    "editor.defaultFormatter": "golang.go"
+  },
 
   // ======================================================
-  // Language-specific formatters
+  // Python
+  // ======================================================
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+  },
+  "autopep8.args": ["--line-length=150", "--indent-size=2"],
+
+  // ======================================================
+  // Shellscript
+  // ======================================================
+  "[shellscript]": {
+    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode"
+  },
+
+  // ======================================================
+  // Terraform
   // ======================================================
   "[terraform]": {
     "editor.defaultFormatter": "hashicorp.terraform"
@@ -89,40 +124,34 @@
   "[hcl]": {
     "editor.defaultFormatter": "jkillian.custom-local-formatters"
   },
-  "[grafana-alloy]": {
-    "editor.defaultFormatter": "Grafana.grafana-alloy"
-  },
-  "[jsonnet]": {
-    "editor.defaultFormatter": "Grafana.vscode-jsonnet"
-  },
-  "[go]": {
-    "editor.defaultFormatter": "golang.go"
-  },
-  "[go.mod]": {
-    "editor.defaultFormatter": "golang.go"
-  },
-  "[go.sum]": {
-    "editor.defaultFormatter": "golang.go"
-  },
-  "[shellscript]": {
-    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode"
-  },
-  "[toml]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml"
-  },
-  "[python]": {
-    "editor.defaultFormatter": "ms-python.autopep8"
-  },
-
-  // ======================================================
-  // Custom local formatters
-  // ======================================================
   "customLocalFormatters.formatters": [
     {
       "command": "terragrunt hcl format --stdin",
       "languages": ["hcl"]
     }
   ],
+
+  // ======================================================
+  // Jsonnet
+  // ======================================================
+  "[jsonnet]": {
+    "editor.defaultFormatter": "Grafana.vscode-jsonnet"
+  },
+
+  // ======================================================
+  // Alloy
+  // ======================================================
+  "[grafana-alloy]": {
+    "editor.defaultFormatter": "Grafana.grafana-alloy"
+  },
+
+  // ======================================================
+  // TOML
+  // ======================================================
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+
   "workbench.editor.empty.hint": "hidden",
   "terminal.integrated.scrollback": 100000,
   "terminal.integrated.initialHint": false,
