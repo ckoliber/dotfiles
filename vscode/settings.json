@@ -101,9 +101,12 @@
   // Python
   // ======================================================
   "[python]": {
-    "editor.defaultFormatter": "ms-python.autopep8"
+    "editor.defaultFormatter": "charliermarsh.ruff"
   },
-  "autopep8.args": ["--line-length=150", "--indent-size=2"],
+  "ruff.configuration": {
+    "indent-width": 2,
+    "line-length": 150
+  },
 
   // ======================================================
   // Shellscript
