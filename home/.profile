@@ -2,7 +2,7 @@
 
 # Path setup
 unset PROMPT_COMMAND
-export PATH="$PATH:$HOME/.local/bin:$HOME/.local/share/mise/shims"
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
 
 # SSH agent (should only start ONCE per session)
 if command -v ssh-agent &>/dev/null && [ -z "$SSH_AUTH_SOCK" ]; then

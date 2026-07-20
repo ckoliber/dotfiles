@@ -107,6 +107,7 @@
     "indent-width": 2,
     "line-length": 150
   },
+  "ruff.importStrategy": "useBundled",
 
   // ======================================================
   // Shellscript
@@ -127,12 +128,6 @@
   "[hcl]": {
     "editor.defaultFormatter": "jkillian.custom-local-formatters"
   },
-  "customLocalFormatters.formatters": [
-    {
-      "command": "terragrunt hcl format --stdin",
-      "languages": ["hcl"]
-    }
-  ],
 
   // ======================================================
   // Jsonnet
@@ -145,7 +140,7 @@
   // Alloy
   // ======================================================
   "[grafana-alloy]": {
-    "editor.defaultFormatter": "Grafana.grafana-alloy"
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
   },
 
   // ======================================================
@@ -155,10 +150,22 @@
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
 
+  // ======================================================
+  // Custom
+  // ======================================================
+  "customLocalFormatters.formatters": [
+    {
+      "command": "terragrunt hcl format --stdin",
+      "languages": ["hcl"]
+    },
+    {
+      "command": "alloy fmt -",
+      "languages": ["grafana-alloy"]
+    }
+  ],
+
   "workbench.editor.empty.hint": "hidden",
   "terminal.integrated.scrollback": 100000,
   "terminal.integrated.initialHint": false,
-  "python.terminal.activateEnvironment": false,
-  "python.terminal.activateEnvInCurrentTerminal": false,
   "telemetry.telemetryLevel": "all"
 }
