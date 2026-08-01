@@ -3,6 +3,14 @@ set -euo pipefail
 
 export DOTFILES=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
+sudo() {
+  if [ "$(id -u)" -eq 0 ]; then
+    "$@"
+  else
+    command sudo "$@"
+  fi
+}
+
 copy() {
   local SRC=$1
   local DEST=$2
@@ -52,41 +60,41 @@ update() {
   elif [[ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]]; then
     export LINUX=1
     if command -v apt >/dev/null 2>&1; then
-      apt update -y
+      sudo apt update -y
       if [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
         export DESKTOP=1
         if ! command -v flatpak >/dev/null 2>&1; then
-          apt install -y flatpak
-          flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          sudo apt install -y flatpak
+          sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
         fi
       fi
     elif command -v dnf >/dev/null 2>&1; then
-      dnf makecache
+      sudo dnf makecache
       if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
         export DESKTOP=1
-        dnf install -y flatpak
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+        sudo dnf install -y flatpak
+        sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       fi
     elif command -v yum >/dev/null 2>&1; then
-      yum makecache
+      sudo yum makecache
       if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
         export DESKTOP=1
-        yum install -y flatpak
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+        sudo yum install -y flatpak
+        sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       fi
     elif command -v pacman >/dev/null 2>&1; then
-      pacman -Sy
+      sudo pacman -Sy
       if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
         export DESKTOP=1
-        pacman -S --noconfirm flatpak
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+        sudo pacman -S --noconfirm flatpak
+        sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       fi
     elif command -v zypper >/dev/null 2>&1; then
-      zypper refresh
+      sudo zypper refresh
       if ! command -v flatpak >/dev/null 2>&1 && [[ -n "$XDG_CURRENT_DESKTOP" || -n "$DESKTOP_SESSION" ]]; then
         export DESKTOP=1
-        zypper install -y flatpak
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+        sudo zypper install -y flatpak
+        sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
       fi
     else
       echo "Unsupported Linux package manager"
@@ -145,7 +153,7 @@ install() {
       "cli:ssh:openssh openssh-client"
       "cli:vim:vim"
       "run:mise:curl https://mise.run | sh"
-      "run:starship:curl -sS https://starship.rs/install.sh | sh"
+      "run:starship:curl -sS https://starship.rs/install.sh | sh -s -- -y"
       "gui:flatpak:com.alacritty.Alacritty"
       "gui:flatpak:com.bitwarden.desktop"
       "gui:flatpak:com.vscodium.codium"
@@ -208,7 +216,7 @@ install() {
         winget install -e --disable-interactivity $package
       elif command -v flatpak >/dev/null 2>&1; then
         echo "Installing $package using flatpak"
-        flatpak install -y flathub $package
+        sudo flatpak install -y flathub $package
       elif command -v brew >/dev/null 2>&1; then
         echo "Installing $package using brew"
         brew install --cask $package
@@ -227,19 +235,19 @@ install() {
         pkg install -y $package
       elif command -v apt >/dev/null 2>&1; then
         echo "Installing $package using apt"
-        apt install -y $package
+        sudo apt install -y $package
       elif command -v dnf >/dev/null 2>&1; then
         echo "Installing $package using dnf"
-        dnf install -y $package
+        sudo dnf install -y $package
       elif command -v yum >/dev/null 2>&1; then
         echo "Installing $package using yum"
-        yum install -y $package
+        sudo yum install -y $package
       elif command -v pacman >/dev/null 2>&1; then
         echo "Installing $package using pacman"
-        pacman -S --noconfirm $package
+        sudo pacman -S --noconfirm $package
       elif command -v zypper >/dev/null 2>&1; then
         echo "Installing $package using zypper"
-        zypper install -y $package
+        sudo zypper install -y $package
       elif command -v brew >/dev/null 2>&1; then
         echo "Installing $package using brew"
         brew install $package
