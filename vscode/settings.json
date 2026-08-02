@@ -105,7 +105,7 @@
   },
   "ruff.configuration": {
     "indent-width": 2,
-    "line-length": 150
+    "line-length": 200
   },
   "ruff.importStrategy": "useBundled",
 
