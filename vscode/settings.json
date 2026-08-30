@@ -167,5 +167,7 @@
   "workbench.editor.empty.hint": "hidden",
   "terminal.integrated.scrollback": 100000,
   "terminal.integrated.initialHint": false,
-  "telemetry.telemetryLevel": "all"
+  "python.createEnvironment.trigger": "off",
+  "telemetry.telemetryLevel": "all",
+  "git.replaceTagsWhenPull": true
 }

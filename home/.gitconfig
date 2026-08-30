@@ -1,6 +1,9 @@
 [init]
 	defaultBranch = main
 
+[pull]
+	rebase = true
+
 [user]
 	name = Hoomaan
 	email = ckoliber@gmail.com
