@@ -18,5 +18,14 @@
 	df = diff
 	lg = log --oneline --graph --all --decorate
 
+[credential "https://github.com"]
+	helper = !gh auth git-credential
+
+[credential "https://gitlab.com"]
+	helper = !glab auth git-credential
+
+[credential "https://git.ckoliber.dev"]
+	helper = !tea login helper
+
 [include]
 	path = ~/.gitconfig.local
