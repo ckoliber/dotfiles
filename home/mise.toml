@@ -1,5 +1,8 @@
 [env]
 SOPS_AGE_KEY_FILE = "{{ env.HOME }}/.config/sops/age.txt"
+GITHUB_TOKEN = { value = "{{ get_env(name='GITHUB_TOKEN', default=exec(command='{ echo protocol=https; echo host=github.com; echo; } | git credential fill 2>/dev/null | sed -n \"s/^password=//p\"')) }}", tools = true }
+GITLAB_TOKEN = { value = "{{ get_env(name='GITLAB_TOKEN', default=exec(command='{ echo protocol=https; echo host=gitlab.com; echo; } | git credential fill 2>/dev/null | sed -n \"s/^password=//p\"')) }}", tools = true }
+GITEA_TOKEN = { value = "{{ get_env(name='GITEA_TOKEN', default=exec(command='{ echo protocol=https; echo host=git.ckoliber.dev; echo; } | git credential fill 2>/dev/null | sed -n \"s/^password=//p\"')) }}", tools = true }
 
 [tools]
 jq = "1.8.1"
@@ -18,7 +21,5 @@ k9s = "0.50.18"
 
 [tools."http:tea"]
 version = "0.16.0"
-
-[tools."http:tea".platforms]
-linux-arm64 = { url = "https://gitea.com/gitea/tea/releases/download/v{{version}}/tea-{{version}}-linux-arm64" }
-macos-arm64 = { url = "https://gitea.com/gitea/tea/releases/download/v{{version}}/tea-{{version}}-darwin-arm64" }
+platforms.linux-arm64.url = "https://gitea.com/gitea/tea/releases/download/v{{version}}/tea-{{version}}-linux-arm64"
+platforms.macos-arm64.url = "https://gitea.com/gitea/tea/releases/download/v{{version}}/tea-{{version}}-darwin-arm64"
