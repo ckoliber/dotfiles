@@ -5,7 +5,7 @@ GITLAB_TOKEN = { value = "{{ get_env(name='GITLAB_TOKEN', default=exec(command='
 GITEA_TOKEN = { value = "{{ get_env(name='GITEA_TOKEN', default=exec(command='{ echo protocol=https; echo host=git.ckoliber.dev; echo; } | git credential fill 2>/dev/null | sed -n \"s/^password=//p\"')) }}", tools = true }
 
 [tools]
-jq = "1.8.1"
+jq = "1.8.2"
 yq = "4.52.4"
 gh = "2.92.0"
 glab = "1.97.0"
