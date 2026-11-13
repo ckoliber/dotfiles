@@ -2,14 +2,7 @@
 
 # Auto-start tmux if not already in tmux and not in VS Code terminal and not in Termux
 if command -v tmux &>/dev/null && [ -z "$TMUX" ] && [ -z "$VSCODE_INJECTION" ] && [ -z "$TERMUX_VERSION" ]; then
-  # Check if any tmux sessions exist
-  if tmux ls 2>/dev/null | grep -q .; then
-    # Attach to the first available session
-    exec tmux attach-session
-  else
-    # Create a new session
-    exec tmux new-session
-  fi
+  exec tmux new-session -A -s main
 fi
 
 # Initialize starship
