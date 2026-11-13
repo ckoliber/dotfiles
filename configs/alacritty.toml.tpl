@@ -1,7 +1,9 @@
+[general]
+import = ["size.toml"]
+
 [window]
 level = "AlwaysOnTop"
 position = { x = 0, y = 0 }
-dimensions = { lines = 0, columns = 0 }
 decorations = "None"
 opacity = 0.8
 
@@ -10,7 +12,7 @@ save_to_clipboard = true
 
 [keyboard]
 bindings = [
-#if OSX
+{%- if os() == "macos" %}
   { key = "A", mods = "Command", chars = "\u0001" },       # Ctrl+A  line start
   { key = "B", mods = "Command", chars = "\u0002" },       # Ctrl+B  back char
   { key = "C", mods = "Command", chars = "\u0003" },       # Ctrl+C  SIGINT
@@ -34,21 +36,21 @@ bindings = [
   { key = "1", mods = "Command", action = "Minimize" },    # Min
   { key = "C", mods = "Command|Shift", action = "Copy" },  # Copy
   { key = "V", mods = "Command|Shift", action = "Paste" }, # Paste
-#else
+{%- else %}
   { key = "1", mods = "Control", action = "Minimize" },    # Min
   { key = "C", mods = "Control|Shift", action = "Copy" },  # Copy
   { key = "V", mods = "Control|Shift", action = "Paste" }, # Paste
-#end
+{%- endif %}
 ]
 
 [terminal.shell]
-#if WINDOWS
+{%- if os() == "windows" %}
 program = "C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe"
-#elif LINUX
+{%- elif os() == "linux" %}
 program = "/usr/bin/bash"
-#elif OSX
+{%- elif os() == "macos" %}
 program = "/opt/homebrew/bin/bash"
-#end
+{%- endif %}
 args = ["--login"]
 
 [font]

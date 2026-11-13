@@ -1,0 +1,175 @@
+[bootstrap.packages]
+"apt:git" = "latest"
+"apt:vim" = "latest"
+"apt:wget" = "latest"
+"apt:curl" = "latest"
+"apt:tmux" = "latest"
+"apt:openssh-client" = "latest"
+"apt:flatpak" = "latest"
+
+"dnf:git" = "latest"
+"dnf:vim" = "latest"
+"dnf:wget" = "latest"
+"dnf:curl" = "latest"
+"dnf:tmux" = "latest"
+"dnf:openssh-clients" = "latest"
+"dnf:flatpak" = "latest"
+
+"pacman:git" = "latest"
+"pacman:vim" = "latest"
+"pacman:wget" = "latest"
+"pacman:curl" = "latest"
+"pacman:tmux" = "latest"
+"pacman:openssh" = "latest"
+"pacman:flatpak" = "latest"
+
+"zypper:git" = "latest"
+"zypper:vim" = "latest"
+"zypper:wget" = "latest"
+"zypper:curl" = "latest"
+"zypper:tmux" = "latest"
+"zypper:openssh" = "latest"
+"zypper:flatpak" = "latest"
+
+"brew:git" = { os = "macos" }
+"brew:vim" = { os = "macos" }
+"brew:wget" = { os = "macos" }
+"brew:bash" = { os = "macos" }
+"brew:tmux" = { os = "macos" }
+"brew:mpv" = { os = "macos" }
+
+"flatpak:com.alacritty.Alacritty" = "latest"
+"flatpak:com.bitwarden.desktop" = "latest"
+"flatpak:com.vscodium.codium" = "latest"
+"flatpak:com.brave.Browser" = "latest"
+"flatpak:io.mpv.Mpv" = "latest"
+
+"brew-cask:bitwarden" = { os = "macos" }
+"brew-cask:vscodium" = { os = "macos" }
+"brew-cask:docker-desktop" = { os = "macos" }
+"brew-cask:brave-browser" = { os = "macos" }
+
+"winget:Git.Git" = "latest"
+"winget:vim.vim" = "latest"
+"winget:marlocarlo.psmux" = "latest"
+"winget:JernejSimoncic.Wget" = "latest"
+"winget:Microsoft.OpenSSH.Beta" = "latest"
+"winget:Alacritty.Alacritty" = "latest"
+"winget:Bitwarden.Bitwarden" = "latest"
+"winget:VSCodium.VSCodium" = "latest"
+"winget:Docker.DockerDesktop" = "latest"
+"winget:Brave.Brave" = "latest"
+"winget:mpv.net" = "latest"
+
+[bootstrap.hooks.post-packages]
+run = """
+if [ "$(uname -s)" = Linux ] && command -v flatpak >/dev/null && ! flatpak remotes | grep -q flathub; then
+  sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+  mise bootstrap packages apply
+fi
+"""
+run_windows = "exit 0"
+
+[bootstrap.repos]
+"~/.vim" = { url = "https://github.com/morhetz/gruvbox.git" }
+
+[bootstrap.directories."/etc/docker"]
+os = "linux"
+owner = "root"
+group = "root"
+
+[bootstrap.files."/etc/docker/daemon.json"]
+os = "linux"
+source = "configs/daemon.json"
+owner = "root"
+group = "root"
+
+[dotfiles]
+"~/.vimrc" = "configs/.vimrc"
+"~/.bashrc" = "configs/.bashrc"
+"~/.profile" = "configs/.profile"
+"~/.zprofile" = "configs/.profile"
+"~/.gitconfig" = "configs/.gitconfig"
+"~/.gitconfig.local" = { content = "", create_if_missing = true }
+"~/.tmux.conf" = { source = "configs/.tmux.conf", mode = "template" }
+"~/.config/mise/mise.toml" = "configs/mise.toml"
+"~/.config/starship.toml" = "configs/starship.toml"
+
+[dotfiles."~/.docker/daemon.json"]
+source = "configs/daemon.json"
+mode = "copy"
+variants = [{ os = "macos" }, { os = "windows" }]
+
+[dotfiles."fonts/*.ttf"]
+source = "fonts/*.ttf"
+mode = "copy"
+variants = [
+  { os = "macos", target = "~/Library/Fonts/*.ttf" },
+  { os = "linux", target = "~/.local/share/fonts/*.ttf" },
+]
+
+[dotfiles."configs/alacritty.toml.tpl"]
+source = "configs/alacritty.toml.tpl"
+mode = "template"
+variants = [
+  { os = "macos", target = "~/.config/alacritty/alacritty.toml" },
+  { os = "linux", target = "~/.var/app/com.alacritty.Alacritty/config/alacritty/alacritty.toml" },
+  { os = "windows", target = "~/AppData/Roaming/alacritty/alacritty.toml" },
+]
+
+[dotfiles."configs/vscode/settings.json"]
+source = "configs/vscode/settings.json"
+variants = [
+  { os = "macos", target = "~/Library/Application Support/VSCodium/User/settings.json" },
+  { os = "linux", target = "~/.var/app/com.vscodium.codium/config/VSCodium/User/settings.json" },
+  { os = "windows", target = "~/AppData/Roaming/VSCodium/User/settings.json" },
+]
+
+[dotfiles."configs/vscode/keybindings.json"]
+source = "configs/vscode/keybindings.json"
+variants = [
+  { os = "macos", target = "~/Library/Application Support/VSCodium/User/keybindings.json" },
+  { os = "linux", target = "~/.var/app/com.vscodium.codium/config/VSCodium/User/keybindings.json" },
+  { os = "windows", target = "~/AppData/Roaming/VSCodium/User/keybindings.json" },
+]
+
+[tasks.bootstrap]
+shell = "bash -c"
+run = '''
+set -euo pipefail
+
+[ -f ~/.ssh/id_rsa ] || { mkdir -p ~/.ssh && ssh-keygen -t rsa -b 4096 -C "$(hostname)" -f ~/.ssh/id_rsa -N ""; }
+
+case "$(uname -s)" in
+Linux)
+  command -v docker >/dev/null || curl -fsSL https://get.docker.com | sh
+  ALACRITTY=~/.var/app/com.alacritty.Alacritty/config/alacritty
+  ;;
+Darwin)
+  if [ ! -d /Applications/Alacritty.app ]; then
+    TAG=$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/alacritty/alacritty/releases/latest)
+    TAG=${TAG##*/}
+    curl -fsSL -o /tmp/alacritty.dmg "https://github.com/alacritty/alacritty/releases/download/$TAG/Alacritty-$TAG.dmg"
+    hdiutil attach -quiet -nobrowse -mountpoint /tmp/alacritty /tmp/alacritty.dmg
+    cp -R /tmp/alacritty/Alacritty.app /Applications/
+    hdiutil detach -quiet /tmp/alacritty
+  fi
+  ALACRITTY=~/.config/alacritty
+  ;;
+*)
+  cp -f fonts/*.ttf /c/Windows/Fonts/
+  setx MSYS2_PATH_TYPE inherit >/dev/null
+  powershell -NoProfile -Command '$lnk="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Alacritty\Alacritty.lnk"; if (Test-Path $lnk) { $ws=New-Object -ComObject WScript.Shell; $sc=$ws.CreateShortcut($lnk); $sc.WorkingDirectory=$env:USERPROFILE; $sc.Save() }'
+  ALACRITTY=~/AppData/Roaming/alacritty
+  ;;
+esac
+
+if command -v alacritty >/dev/null && [ ! -f "$ALACRITTY/size.toml" ]; then
+  read -r rows columns < <(alacritty -v -o 'window.startup_mode="Maximized"' -e echo | awk '/PTY dimensions:/{print $7, $9}')
+  printf '[window]\ndimensions = { lines = %d, columns = %d }\n' $((rows * 2 / 3)) "$columns" >"$ALACRITTY/size.toml"
+fi
+
+if command -v codium >/dev/null; then
+  sed 's/\r$//; s/^/--install-extension /' configs/vscode/extensions.txt | xargs codium
+fi
+'''

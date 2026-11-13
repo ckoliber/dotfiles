@@ -1,0 +1,6 @@
+[dotfiles]
+"~/.config/mise/scripts" = "scripts"
+"~/.config/mise/config.base.toml" = "mise.base.toml"
+"~/.config/mise/config.ansible.toml" = "mise.ansible.toml"
+"~/.config/mise/config.docker.toml" = "mise.docker.toml"
+"~/.config/mise/config.terraform.toml" = "mise.terraform.toml"

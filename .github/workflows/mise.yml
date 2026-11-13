@@ -1,0 +1,75 @@
+name: Reusable mise
+
+on:
+  workflow_call:
+    inputs:
+      script:
+        description: "Bash script to run (for example, mise run test)"
+        type: string
+        required: true
+      fetch-depth:
+        description: "Number of commits to fetch; 0 fetches all history and tags (needed by base:cliff)"
+        type: number
+        default: 1
+      cache-tools:
+        description: "Comma-separated tool caches to enable, without spaces (uv, ansible, npm, renovate, terraform), for example terraform,npm"
+        type: string
+        default: ""
+
+jobs:
+  mise:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: ${{ inputs.fetch-depth }}
+
+      - uses: jdx/mise-action@v5
+        with:
+          install: false
+
+      - name: Bootstrap shared profiles
+        run: mise -E ci bootstrap --from https://github.com/ckoliber/dotfiles.git --save-env --yes
+
+      - name: Install tools
+        run: mise install
+
+      - if: contains(format(',{0},', inputs.cache-tools), ',uv,')
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ job.check_run_id }}
+          restore-keys: uv-${{ runner.os }}-
+
+      - if: contains(format(',{0},', inputs.cache-tools), ',ansible,')
+        uses: actions/cache@v6
+        with:
+          path: ~/.ansible
+          key: ansible-${{ runner.os }}-${{ job.check_run_id }}
+          restore-keys: ansible-${{ runner.os }}-
+
+      - if: contains(format(',{0},', inputs.cache-tools), ',npm,')
+        uses: actions/cache@v6
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ job.check_run_id }}
+          restore-keys: npm-${{ runner.os }}-
+
+      - if: contains(format(',{0},', inputs.cache-tools), ',renovate,')
+        uses: actions/cache@v6
+        with:
+          path: /tmp/renovate/cache
+          key: renovate-${{ runner.os }}-${{ job.check_run_id }}
+          restore-keys: renovate-${{ runner.os }}-
+
+      - if: contains(format(',{0},', inputs.cache-tools), ',terraform,')
+        uses: actions/cache@v6
+        with:
+          path: .terraform/providers
+          key: terraform-${{ runner.os }}-${{ job.check_run_id }}
+          restore-keys: terraform-${{ runner.os }}-
+
+      - name: Run script
+        run: ${{ inputs.script }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

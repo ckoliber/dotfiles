@@ -1,0 +1,22 @@
+[env]
+BUILDX = "docker-cli-plugin-docker-buildx"
+GHCR_REGISTRY = "TODO"
+
+[tools]
+"aqua:docker/cli" = "29.9.2"
+"aqua:docker/buildx" = "0.38.1"
+
+[tasks."docker:build"]
+dir = "{{ cwd }}"
+file = "~/.config/mise/scripts/docker-build.sh"
+
+[tasks."docker:lint"]
+dir = "{{ cwd }}"
+run = """
+DRIVER=$([ -n "${BUILDKIT_HOST:-}" ] && echo "remote $BUILDKIT_HOST" || echo "docker-container")
+$BUILDX use buildkit 2>/dev/null >&2 || $BUILDX create --use --name buildkit --driver $DRIVER >&2
+$BUILDX build --check -f Dockerfile .
+"""
+
+[tasks."docker:login"]
+run = "docker login $GHCR_REGISTRY"

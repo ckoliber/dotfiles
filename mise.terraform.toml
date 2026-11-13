@@ -1,0 +1,15 @@
+[tools]
+terraform = "1.17.1"
+
+[tasks."terraform:deps"]
+description = "Initialize the Terraform working directory"
+dir = "{{ cwd }}"
+run = "terraform init"
+
+[tasks."terraform:lint"]
+description = "Check Terraform formatting and validate the configuration"
+dir = "{{ cwd }}"
+run = """
+terraform fmt -check
+terraform validate -no-color
+"""

@@ -1,0 +1,26 @@
+[env]
+SOPS_AGE_KEY_FILE = "{{ env.HOME }}/.config/sops/age.txt"
+
+[tools]
+jq = "1.8.1"
+yq = "4.52.4"
+gh = "2.92.0"
+glab = "1.97.0"
+shfmt = "3.13.1"
+starship = "1.27.0"
+codex = "0.166.0"
+claude = "2.1.308"
+opencode = "1.17.17"
+docker-cli = "29.3.0"
+kubelogin = "1.36.1"
+talosctl = "1.12.6"
+kubectl = "1.36.1"
+k9s = "0.50.18"
+
+[tools."http:tea"]
+version = "0.16.0"
+platforms.linux-arm64.url = "https://gitea.com/gitea/tea/releases/download/v{{version}}/tea-{{version}}-linux-arm64"
+platforms.macos-arm64.url = "https://gitea.com/gitea/tea/releases/download/v{{version}}/tea-{{version}}-darwin-arm64"
+
+[settings]
+experimental = true

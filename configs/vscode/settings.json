@@ -4,7 +4,10 @@
   // ======================================================
   "git.confirmSync": false,
   "git.enableSmartCommit": true,
+  "git.replaceTagsWhenPull": true,
   "git.requireGitUserConfig": false,
+  "git.blame.statusBarItem.enabled": false,
+  "git.blame.editorDecoration.enabled": true,
 
   // ======================================================
   // Editor behavior & formatting
@@ -100,14 +103,10 @@
   // ======================================================
   // Python
   // ======================================================
+  "ruff.configurationPreference": "filesystemFirst",
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff"
   },
-  "ruff.configuration": {
-    "indent-width": 2,
-    "line-length": 200
-  },
-  "ruff.importStrategy": "useBundled",
 
   // ======================================================
   // Shellscript
@@ -167,7 +166,6 @@
   "workbench.editor.empty.hint": "hidden",
   "terminal.integrated.scrollback": 100000,
   "terminal.integrated.initialHint": false,
-  "python.createEnvironment.trigger": "off",
-  "telemetry.telemetryLevel": "all",
-  "git.replaceTagsWhenPull": true
+  "python.createEnvironment.trigger": "off"
+  // "telemetry.telemetryLevel": "all"
 }
