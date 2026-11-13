@@ -6,7 +6,7 @@
 
 ```bash
 curl -fsSL https://mise.run | sh
-~/.local/bin/mise -E desktop bootstrap --from https://github.com/ckoliber/dotfiles.git --from-dir ~/.dotfiles --save-env
+~/.local/bin/mise -E dev bootstrap --from https://github.com/ckoliber/dotfiles.git --from-dir ~/.dotfiles --save-env
 ```
 
 ### Windows
@@ -21,7 +21,7 @@ winget install -e --disable-interactivity jdx.mise
 Then open **Git Bash** as Administrator:
 
 ```bash
-mise -E desktop bootstrap --from https://github.com/ckoliber/dotfiles.git --from-dir ~/.dotfiles --save-env
+mise -E dev bootstrap --from https://github.com/ckoliber/dotfiles.git --from-dir ~/.dotfiles --save-env
 ```
 
 Open a new terminal when it finishes.
@@ -40,7 +40,7 @@ mise bootstrap --from https://github.com/ckoliber/dotfiles.git --from-dir ~/.dot
 Select shared profiles in the project's `.miserc.toml`:
 
 ```toml
-env = ["base", "docker"]
+env = ["always", "docker"]
 ```
 
 In CI, use the reusable workflow:

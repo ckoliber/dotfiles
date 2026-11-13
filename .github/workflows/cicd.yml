@@ -14,6 +14,8 @@ jobs:
       contents: read
     with:
       script: |
+        export MISE_ENV=always
+        mise install
         mise tasks ls
         mise exec actionlint@1.7.12 -- actionlint
         renovate-config-validator --strict default.json .github/renovate.json

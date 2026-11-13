@@ -1,42 +1,31 @@
 [bootstrap.packages]
 "apt:git" = "latest"
-"apt:vim" = "latest"
-"apt:wget" = "latest"
+"apt:bash" = "latest"
 "apt:curl" = "latest"
-"apt:tmux" = "latest"
+"apt:wget" = "latest"
 "apt:openssh-client" = "latest"
 "apt:flatpak" = "latest"
 
 "dnf:git" = "latest"
-"dnf:vim" = "latest"
-"dnf:wget" = "latest"
+"dnf:bash" = "latest"
 "dnf:curl" = "latest"
-"dnf:tmux" = "latest"
+"dnf:wget" = "latest"
 "dnf:openssh-clients" = "latest"
 "dnf:flatpak" = "latest"
 
 "pacman:git" = "latest"
-"pacman:vim" = "latest"
-"pacman:wget" = "latest"
+"pacman:bash" = "latest"
 "pacman:curl" = "latest"
-"pacman:tmux" = "latest"
+"pacman:wget" = "latest"
 "pacman:openssh" = "latest"
 "pacman:flatpak" = "latest"
 
 "zypper:git" = "latest"
-"zypper:vim" = "latest"
-"zypper:wget" = "latest"
+"zypper:bash" = "latest"
 "zypper:curl" = "latest"
-"zypper:tmux" = "latest"
+"zypper:wget" = "latest"
 "zypper:openssh" = "latest"
 "zypper:flatpak" = "latest"
-
-"brew:git" = { os = "macos" }
-"brew:vim" = { os = "macos" }
-"brew:wget" = { os = "macos" }
-"brew:bash" = { os = "macos" }
-"brew:tmux" = { os = "macos" }
-"brew:mpv" = { os = "macos" }
 
 "flatpak:com.alacritty.Alacritty" = "latest"
 "flatpak:com.bitwarden.desktop" = "latest"
@@ -44,14 +33,19 @@
 "flatpak:com.brave.Browser" = "latest"
 "flatpak:io.mpv.Mpv" = "latest"
 
+"brew:git" = { os = "macos" }
+"brew:bash" = { os = "macos" }
+"brew:curl" = { os = "macos" }
+"brew:wget" = { os = "macos" }
+"brew:openssh" = { os = "macos" }
+"brew-cask:alacritty" = { os = "macos" }
 "brew-cask:bitwarden" = { os = "macos" }
 "brew-cask:vscodium" = { os = "macos" }
 "brew-cask:docker-desktop" = { os = "macos" }
 "brew-cask:brave-browser" = { os = "macos" }
+"brew-cask:mpv" = { os = "macos" }
 
 "winget:Git.Git" = "latest"
-"winget:vim.vim" = "latest"
-"winget:marlocarlo.psmux" = "latest"
 "winget:JernejSimoncic.Wget" = "latest"
 "winget:Microsoft.OpenSSH.Beta" = "latest"
 "winget:Alacritty.Alacritty" = "latest"
@@ -63,9 +57,12 @@
 
 [bootstrap.hooks.post-packages]
 run = """
-if [ "$(uname -s)" = Linux ] && command -v flatpak >/dev/null && ! flatpak remotes | grep -q flathub; then
-  sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-  mise bootstrap packages apply
+if [ "$(uname -s)" = Linux ]; then
+  command -v docker >/dev/null || curl -fsSL https://get.docker.com | sh
+  if command -v flatpak >/dev/null && ! flatpak remotes | grep -q flathub; then
+    sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    mise bootstrap packages apply --yes
+  fi
 fi
 """
 run_windows = "exit 0"
@@ -73,32 +70,47 @@ run_windows = "exit 0"
 [bootstrap.repos]
 "~/.vim" = { url = "https://github.com/morhetz/gruvbox.git" }
 
-[bootstrap.directories."/etc/docker"]
-os = "linux"
-owner = "root"
-group = "root"
-
-[bootstrap.files."/etc/docker/daemon.json"]
-os = "linux"
-source = "configs/daemon.json"
-owner = "root"
-group = "root"
-
 [dotfiles]
 "~/.vimrc" = "configs/.vimrc"
 "~/.bashrc" = "configs/.bashrc"
 "~/.profile" = "configs/.profile"
 "~/.zprofile" = "configs/.profile"
-"~/.gitconfig" = "configs/.gitconfig"
-"~/.gitconfig.local" = { content = "", create_if_missing = true }
 "~/.tmux.conf" = { source = "configs/.tmux.conf", mode = "template" }
-"~/.config/mise/mise.toml" = "configs/mise.toml"
 "~/.config/starship.toml" = "configs/starship.toml"
+"~/.config/git/dotfiles.gitconfig" = "configs/gitconfig"
 
-[dotfiles."~/.docker/daemon.json"]
-source = "configs/daemon.json"
-mode = "copy"
-variants = [{ os = "macos" }, { os = "windows" }]
+[dotfiles."~/.config/mise/mise.toml"]
+content = '''
+[env]
+SOPS_AGE_KEY_FILE = "{{ env.HOME }}/.config/sops/age.txt"
+
+[tools]
+jq = "1.8.1"
+yq = "4.52.4"
+gh = "2.92.0"
+glab = "1.97.0"
+shfmt = "3.13.1"
+vim = "9.2.1252"
+tmux = { version = "3.8", os = ["linux", "macos"] }
+"github:marlocarlo/psmux" = { version = "3.4.0", os = ["windows"] }
+starship = "1.27.0"
+codex = "0.166.0"
+claude = "2.1.308"
+opencode = "1.17.17"
+docker-cli = "29.3.0"
+kubelogin = "1.36.1"
+talosctl = "1.12.6"
+kubectl = "1.36.1"
+k9s = "0.50.18"
+
+[tools."http:tea"]
+version = "0.16.0"
+platforms.linux-arm64.url = "https://gitea.com/gitea/tea/releases/download/v{{version}}/tea-{{version}}-linux-arm64"
+platforms.macos-arm64.url = "https://gitea.com/gitea/tea/releases/download/v{{version}}/tea-{{version}}-darwin-arm64"
+
+[settings]
+experimental = true
+'''
 
 [dotfiles."fonts/*.ttf"]
 source = "fonts/*.ttf"
@@ -140,20 +152,14 @@ set -euo pipefail
 
 [ -f ~/.ssh/id_rsa ] || { mkdir -p ~/.ssh && ssh-keygen -t rsa -b 4096 -C "$(hostname)" -f ~/.ssh/id_rsa -N ""; }
 
+git config --global --replace-all --fixed-value include.path '~/.config/git/dotfiles.gitconfig' '~/.config/git/dotfiles.gitconfig'
+
 case "$(uname -s)" in
 Linux)
-  command -v docker >/dev/null || curl -fsSL https://get.docker.com | sh
   ALACRITTY=~/.var/app/com.alacritty.Alacritty/config/alacritty
   ;;
 Darwin)
-  if [ ! -d /Applications/Alacritty.app ]; then
-    TAG=$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/alacritty/alacritty/releases/latest)
-    TAG=${TAG##*/}
-    curl -fsSL -o /tmp/alacritty.dmg "https://github.com/alacritty/alacritty/releases/download/$TAG/Alacritty-$TAG.dmg"
-    hdiutil attach -quiet -nobrowse -mountpoint /tmp/alacritty /tmp/alacritty.dmg
-    cp -R /tmp/alacritty/Alacritty.app /Applications/
-    hdiutil detach -quiet /tmp/alacritty
-  fi
+  xattr -r -d com.apple.quarantine /Applications/Alacritty.app 2>/dev/null || true
   ALACRITTY=~/.config/alacritty
   ;;
 *)
