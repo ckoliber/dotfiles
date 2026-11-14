@@ -118,6 +118,7 @@ mode = "copy"
 variants = [
   { os = "macos", target = "~/Library/Fonts/*.ttf" },
   { os = "linux", target = "~/.local/share/fonts/*.ttf" },
+  { os = "windows", target = "~/AppData/Local/Microsoft/Windows/Fonts/*.ttf" },
 ]
 
 [dotfiles."configs/alacritty.toml.tpl"]
@@ -163,7 +164,7 @@ Darwin)
   ALACRITTY=~/.config/alacritty
   ;;
 *)
-  cp -f fonts/*.ttf /c/Windows/Fonts/
+  powershell -NoProfile -Command 'Get-ChildItem "$env:LOCALAPPDATA\Microsoft\Windows\Fonts\*.ttf" | ForEach-Object { New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -Name "$($_.BaseName) (TrueType)" -Value $_.FullName -Force | Out-Null }'
   setx MSYS2_PATH_TYPE inherit >/dev/null
   powershell -NoProfile -Command '$lnk="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Alacritty\Alacritty.lnk"; if (Test-Path $lnk) { $ws=New-Object -ComObject WScript.Shell; $sc=$ws.CreateShortcut($lnk); $sc.WorkingDirectory=$env:USERPROFILE; $sc.Save() }'
   ALACRITTY=~/AppData/Roaming/alacritty

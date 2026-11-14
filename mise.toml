@@ -1,6 +1,6 @@
 [dotfiles]
-"~/.config/mise/scripts" = "configs/mise/tasks"
-"~/.config/mise/mise.always.toml" = "configs/mise/mise.always.toml"
-"~/.config/mise/mise.docker.toml" = "configs/mise/mise.docker.toml"
-"~/.config/mise/mise.ansible.toml" = "configs/mise/mise.ansible.toml"
-"~/.config/mise/mise.terraform.toml" = "configs/mise/mise.terraform.toml"
+"~/.config/mise/scripts" = "mise/scripts"
+"~/.config/mise/mise.always.toml" = "mise/mise.always.toml"
+"~/.config/mise/mise.docker.toml" = "mise/mise.docker.toml"
+"~/.config/mise/mise.ansible.toml" = "mise/mise.ansible.toml"
+"~/.config/mise/mise.terraform.toml" = "mise/mise.terraform.toml"
