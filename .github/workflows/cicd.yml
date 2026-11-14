@@ -13,8 +13,8 @@ jobs:
     permissions:
       contents: read
     with:
-      env: always
       script: |
+        export MISE_ENV=always
         mise install
         mise tasks ls
         mise run renovate:check default.json .github/renovate.json
