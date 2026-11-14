@@ -1,10 +1,18 @@
 [env]
 BUILDX = "docker-cli-plugin-docker-buildx"
-GHCR_REGISTRY = "ghcr.io/ckoliber"
+GHCR_REGISTRY = "ghcr.io"
 
 [tools]
 "aqua:docker/cli" = "29.9.2"
 "aqua:docker/buildx" = "0.38.1"
+
+[tasks."docker:login"]
+description = "Log in to GHCR_REGISTRY with the gh token (needs write:packages locally)"
+run = "gh auth token | docker login $GHCR_REGISTRY -u \"${GITHUB_ACTOR:-$(gh api user --jq .login)}\" --password-stdin"
+
+[tasks."docker:logout"]
+description = "Log out of GHCR_REGISTRY"
+run = "docker logout $GHCR_REGISTRY"
 
 [tasks."docker:build"]
 dir = "{{ cwd }}"
@@ -17,6 +25,3 @@ DRIVER=$([ -n "${BUILDKIT_HOST:-}" ] && echo "remote $BUILDKIT_HOST" || echo "do
 $BUILDX use buildkit 2>/dev/null >&2 || $BUILDX create --use --name buildkit --driver $DRIVER >&2
 $BUILDX build --check -f Dockerfile .
 """
-
-[tasks."docker:login"]
-run = "docker login $GHCR_REGISTRY"
