@@ -3,6 +3,10 @@ name: Reusable mise
 on:
   workflow_call:
     inputs:
+      env:
+        description: "Comma-separated mise environments to set as MISE_ENV"
+        type: string
+        default: ""
       script:
         description: "Bash script to run (for example, mise run test)"
         type: string
@@ -26,13 +30,10 @@ jobs:
 
       - uses: jdx/mise-action@v5
         with:
-          install: false
-
-      - name: Bootstrap shared profiles
-        run: mise bootstrap --from https://github.com/ckoliber/dotfiles.git --yes
-
-      - name: Install tools
-        run: mise install
+          install: true
+          bootstrap: true
+          bootstrap_args: --from https://github.com/${{ job.workflow_repository }}.git?ref=${{ job.workflow_sha }} --yes
+          cache_save_post: true
 
       - if: contains(format(',{0},', inputs.cache-tools), ',uv,')
         uses: actions/cache@v6
@@ -72,4 +73,5 @@ jobs:
       - name: Run script
         run: ${{ inputs.script }}
         env:
+          MISE_ENV: ${{ inputs.env }}
           GITHUB_TOKEN: ${{ github.token }}
