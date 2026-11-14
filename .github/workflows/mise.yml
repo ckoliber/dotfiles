@@ -8,7 +8,7 @@ on:
         type: string
         required: true
       fetch-depth:
-        description: "Number of commits to fetch; 0 fetches all history and tags (needed by base:cliff)"
+        description: "Number of commits to fetch; 0 fetches all history and tags
         type: number
         default: 1
       cache-tools:

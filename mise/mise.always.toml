@@ -4,19 +4,22 @@ node = "24.22.2"
 git-cliff = "2.14.2"
 "npm:renovate" = { version = "44.198.3", allow_builds = "re2", trust_policy_excludes = "*" }
 
-[tasks."base:cliff"]
+[tasks."release:cliff"]
 description = "Tag and publish a GitHub release from conventional commits on release/prerelease branches, or print the next version"
 dir = "{{ cwd }}"
 file = "~/.config/mise/scripts/cliff.sh"
 
-[tasks."base:renovate"]
+[tasks."renovate:check"]
+description = "Validate the Renovate config of this repository (or the config files passed as arguments)"
+dir = "{{ cwd }}"
+run = "renovate-config-validator --strict --no-global \"$@\""
+
+[tasks."renovate:update"]
 description = "Run Renovate against this repository (or the repositories passed as arguments)"
 dir = "{{ cwd }}"
 run = """
 export RENOVATE_TOKEN=${RENOVATE_TOKEN:-$(gh auth token)}
 export RENOVATE_PLATFORM=github
 export RENOVATE_REPOSITORIES=$(git remote get-url origin | sed -E 's#(\\.git)?/?$##; s#.*[:/]([^:/]+/[^:/]+)$#\\1#')
-export RENOVATE_CONFIG_FILE=$(git rev-parse --show-toplevel)/.github/renovate.json
-export RENOVATE_REQUIRE_CONFIG=ignored
-renovate
+renovate "$@"
 """

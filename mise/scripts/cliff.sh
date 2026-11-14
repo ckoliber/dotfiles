@@ -1,46 +1,44 @@
 #!/usr/bin/env bash
-
-#USAGE flag "--dry-run" help="Print the next version without releasing"
+#USAGE flag "--dry-run" help="Print the version without releasing"
 
 set -euo pipefail
 
-export GIT_CLIFF_CONFIG="$(dirname "${BASH_SOURCE[0]}")/cliff.toml"
+# Branch: from CI vars (GitHub, GitLab), else git
+[ "${GITHUB_REF_TYPE:-}" != branch ] || BRANCH=$GITHUB_REF_NAME
+BRANCH=${BRANCH:-${CI_COMMIT_BRANCH:-$(git symbolic-ref -q --short HEAD || true)}}
 
-function get_ref() {
-  TYPE="branch"
-  if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
-    TYPE="tag"
-  elif git describe --tags --exact-match >/dev/null 2>&1; then
-    TYPE="tag"
-  fi
-
-  if [ -n "${GITHUB_REF_NAME:-}" ]; then
-    echo "$TYPE/$GITHUB_REF_NAME"
-  else
-    echo "$TYPE/$(git symbolic-ref --quiet --short HEAD || git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD)"
-  fi
-}
-
-if git remote get-url origin >/dev/null 2>&1; then
-  export GITHUB_TOKEN=${GITHUB_TOKEN:-$(gh auth token)}
-  export GITHUB_REPO=$(git remote get-url origin | sed -E 's#(\.git)?/?$##; s#.*[:/]([^:/]+/[^:/]+)$#\1#')
-fi
-
-VERSION=$(git cliff --offline --unreleased --bumped-version)
-if [ "${usage_dry_run:-false}" = true ]; then
-  echo "$VERSION"
+# Tags: print the tag and stop
+if [ -z "$BRANCH" ] && git describe --tags --exact-match 2>/dev/null; then
   exit 0
 fi
 
-# Release branches (main/master) and prerelease branches (alpha/beta/rc/next).
-if [[ "$(get_ref)" =~ ^branch/(main|master|alpha|beta|rc|next)$ ]]; then
-  CURRENT=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-  if [ "$VERSION" = "$CURRENT" ]; then
-    echo "No release-worthy changes since $CURRENT, skipping release."
-  else
-    git cliff --unreleased --tag "$VERSION" --output CHANGELOG.md
-    # gh release create "$VERSION" --title "$VERSION" --target "$(git rev-parse HEAD)" --notes-file CHANGELOG.md
-  fi
+# Tag prefix: none at the repo root, else the dir name
+PREFIX=$(git rev-parse --show-prefix)
+PREFIX=${PREFIX:+$(basename "$PWD")/}
+export GIT_CLIFF_CONFIG=~/.config/mise/scripts/cliff.toml GIT_CLIFF_OFFLINE=true RUST_LOG=error
+export GIT_CLIFF_TAG_PATTERN="^${PREFIX}[0-9]+\.[0-9]+\.[0-9]+\$" GIT_CLIFF__BUMP__INITIAL_TAG=${PREFIX}0.1.0
+export GITHUB_REPO=${GITHUB_REPOSITORY:-$(git remote get-url origin | sed -E 's#(\.git)?/?$##; s#.*[:/]([^:/]+/[^:/]+)$#\1#')}
+
+# Next version and number of release-worthy commits; outside main, bump at least a patch
+read -r VERSION COUNT <<<"$(git cliff -u --bump --strip all --body '{{ version }} {{ commits | length }}')"
+[ "$COUNT" != 0 ] || [[ $BRANCH =~ ^(main|master)$ ]] || VERSION=$(git cliff -u --bump patch --bumped-version)
+
+# Tag format per branch
+case $BRANCH in
+main | master) TAG=$VERSION ;;
+alpha | beta | next | rc)
+  TAG=$VERSION-$BRANCH.$COUNT PRERELEASE=true
+  GIT_CLIFF_TAG_PATTERN="^${PREFIX}[0-9]+\.[0-9]+\.[0-9]+(-.+)?\$"
+  ;;
+*) TAG=$VERSION-build.$(git rev-list --count HEAD).g$(git rev-parse --short HEAD) COUNT=0 ;;
+esac
+
+# Print, release, or skip
+if [ "${usage_dry_run:-false}" = true ]; then
+  echo "$TAG"
+elif [ "$COUNT" != 0 ] && ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+  NOTES=$(git cliff -u --tag "$TAG" --strip all)
+  gh release create "$TAG" --target "$(git rev-parse HEAD)" --notes "$NOTES" --prerelease="${PRERELEASE:-false}"
 else
-  echo "Not a release or pre-release branch, skipping release."
+  echo "Nothing to release on ${BRANCH:-HEAD}" >&2
 fi

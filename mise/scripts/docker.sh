@@ -15,9 +15,9 @@ fi
 
 DRIVER=$([ -n "${BUILDKIT_HOST:-}" ] && echo "remote $BUILDKIT_HOST" || echo "docker-container")
 $BUILDX use buildkit 2>/dev/null >&2 || $BUILDX create --use --name buildkit --driver $DRIVER >&2
-$BUILDX build -f Dockerfile -t "$ECR_REGISTRY/gridfuse/$NAME:${usage_version?}" \
-  --cache-from type=registry,ref=$ECR_REGISTRY/gridfuse/$NAME:cache \
-  --cache-to type=registry,ref=$ECR_REGISTRY/gridfuse/$NAME:cache,mode=max \
+$BUILDX build -f Dockerfile -t "$GHCR_REGISTRY/$NAME:${usage_version?}" \
+  --cache-from type=registry,ref=$GHCR_REGISTRY/$NAME:cache \
+  --cache-to type=registry,ref=$GHCR_REGISTRY/$NAME:cache,mode=max \
   --platform "${usage_platform?}" --metadata-file "$metadata" --push . >&2
 
 jq -r '."containerimage.digest"' "$metadata"
