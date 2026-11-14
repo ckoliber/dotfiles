@@ -1,39 +1,17 @@
 # Dotfiles
 
-## Install
+## Install mise
 
-### macOS / Linux
+- **macOS / Linux:** `curl -fsSL https://mise.run | sh && export PATH="$HOME/.local/bin:$PATH"`
+- **Windows** (PowerShell as Administrator): `winget install -e Git.Git jdx.mise`, then open **Git Bash** as Administrator
 
-```bash
-curl -fsSL https://mise.run | sh
-~/.local/bin/mise -E dev bootstrap --from https://github.com/ckoliber/dotfiles.git --from-dir ~/.dotfiles --save-env
-```
-
-### Windows
-
-Open PowerShell as Administrator:
-
-```powershell
-winget install -e --disable-interactivity Git.Git
-winget install -e --disable-interactivity jdx.mise
-```
-
-Then open **Git Bash** as Administrator:
+## Install dotfiles
 
 ```bash
-mise -E dev bootstrap --from https://github.com/ckoliber/dotfiles.git --from-dir ~/.dotfiles --save-env
+mise -E dev bootstrap --from https://github.com/ckoliber/dotfiles.git --from-dir ~/.dotfiles
 ```
 
-Open a new terminal when it finishes.
-
-On macOS, swap Command and Control in **System Settings → Keyboard → Modifier
-Keys**.
-
-## Update
-
-```bash
-mise bootstrap --from https://github.com/ckoliber/dotfiles.git --from-dir ~/.dotfiles --update
-```
+Open a new terminal when it finishes. To update later, run the same command with `--update`.
 
 ## Projects
 
@@ -43,7 +21,7 @@ Select shared profiles in the project's `.miserc.toml`:
 env = ["always", "docker"]
 ```
 
-In CI, use the reusable workflow:
+CI workflow and Renovate preset:
 
 ```yaml
 jobs:
@@ -53,10 +31,6 @@ jobs:
       script: mise run docker:build --version 1.0.0
 ```
 
-Renovate:
-
 ```json
-{
-  "extends": ["local>ckoliber/dotfiles"]
-}
+{ "extends": ["local>ckoliber/dotfiles"] }
 ```
