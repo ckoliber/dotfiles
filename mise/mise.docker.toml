@@ -1,6 +1,6 @@
 [env]
 BUILDX = "docker-cli-plugin-docker-buildx"
-GHCR_REGISTRY = "TODO"
+GHCR_REGISTRY = "ghcr.io/ckoliber"
 
 [tools]
 "aqua:docker/cli" = "29.9.2"
