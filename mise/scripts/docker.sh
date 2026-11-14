@@ -13,6 +13,11 @@ else
   NAME=$(basename "$PWD")
 fi
 
+# QEMU emulators for cross-platform builds: Linux hosts with a local builder only (Docker Desktop ships them)
+if [ "$(uname -s)" = Linux ] && [ -z "${BUILDKIT_HOST:-}" ]; then
+  docker run --privileged --rm tonistiigi/binfmt --install all >&2
+fi
+
 DRIVER=$([ -n "${BUILDKIT_HOST:-}" ] && echo "remote $BUILDKIT_HOST" || echo "docker-container")
 $BUILDX use buildkit 2>/dev/null >&2 || $BUILDX create --use --name buildkit --driver $DRIVER >&2
 $BUILDX build -f Dockerfile -t "$GHCR_REGISTRY/ckoliber/$NAME:${usage_version?}" \
