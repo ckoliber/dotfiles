@@ -18,4 +18,4 @@ jobs:
         mise install
         mise tasks ls
         mise exec actionlint@1.7.12 -- actionlint
-        renovate-config-validator --strict default.json .github/renovate.json
+        mise run renovate:check default.json .github/renovate.json
