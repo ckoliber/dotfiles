@@ -7,7 +7,7 @@ git-cliff = "2.14.2"
 [tasks."release:cliff"]
 description = "Tag and publish a GitHub release from conventional commits on release/prerelease branches, or print the next version"
 dir = "{{ cwd }}"
-file = "~/.config/mise/scripts/cliff.sh"
+file = "{{ env.HOME }}/.config/mise/scripts/cliff.sh"
 
 [tasks."renovate:check"]
 description = "Validate the Renovate config of this repository (or the config files passed as arguments)"

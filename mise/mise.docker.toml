@@ -8,7 +8,7 @@ GHCR_REGISTRY = "TODO"
 
 [tasks."docker:build"]
 dir = "{{ cwd }}"
-file = "~/.config/mise/scripts/docker.sh"
+file = "{{ env.HOME }}/.config/mise/scripts/docker.sh"
 
 [tasks."docker:lint"]
 dir = "{{ cwd }}"
