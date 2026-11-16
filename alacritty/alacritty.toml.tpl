@@ -1,6 +1,3 @@
-[general]
-import = ["size.toml"]
-
 [window]
 level = "AlwaysOnTop"
 position = { x = 0, y = 0 }

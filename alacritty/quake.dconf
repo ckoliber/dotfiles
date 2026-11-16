@@ -1,0 +1,6 @@
+# Quake mode: Ctrl+1 shows Alacritty on the top half of the current screen (Quake Terminal GNOME extension)
+[/]
+terminal-id='com.alacritty.Alacritty.desktop'
+terminal-shortcut=['<Control>1']
+vertical-size=50
+render-on-current-monitor=true
