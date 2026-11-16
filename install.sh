@@ -104,7 +104,6 @@ home() {
   done
   link home/.profile "$HOME/.zprofile"
   [ -e "$HOME/.vim" ] || git clone --depth 1 https://github.com/morhetz/gruvbox.git "$HOME/.vim"
-  [ -n "$CONTAINER" ] || [ -f "$HOME/.ssh/id_rsa" ] || { mkdir -p "$HOME/.ssh" && ssh-keygen -t rsa -b 4096 -C "$(hostname)" -f "$HOME/.ssh/id_rsa" -N ""; }
 }
 
 tools() {

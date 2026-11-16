@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Usage: git identity <org> <name> <email> [dir]
+# Repos under [dir] (default ~/<org>) commit as <name> <email> and use ~/.ssh/<org> for SSH
+set -euo pipefail
+
+[ $# -ge 3 ] || { echo "Usage: git identity <org> <name> <email> [dir]" >&2 && exit 1; }
+org=$1 name=$2 email=$3 dir=${4:-$HOME/$1}
+config=$HOME/.config/git/$org
+
+mkdir -p "$(dirname "$config")" "$HOME/.ssh" "$dir"
+[ -f "$HOME/.ssh/$org" ] || ssh-keygen -t ed25519 -C "$email" -f "$HOME/.ssh/$org" -N ""
+git config -f "$config" user.name "$name"
+git config -f "$config" user.email "$email"
+git config -f "$config" core.sshCommand "ssh -i ~/.ssh/$org -o IdentitiesOnly=yes"
+git config -f "$HOME/.config/git/identities" --replace-all "includeIf.gitdir:${dir/#$HOME/~}/.path" "~/.config/git/$org"
+
+echo "Add this public key to $org's Git host:"
+cat "$HOME/.ssh/$org.pub"

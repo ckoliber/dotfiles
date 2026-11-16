@@ -48,3 +48,15 @@ bash dotfiles/install.sh
 ```
 
 To update later, run `git -C dotfiles pull` and `bash dotfiles/install.sh` again.
+
+---
+
+### Git Identities
+
+Names, emails and SSH keys are kept per machine, never in this repo. Create one identity per org:
+
+```bash
+git identity <org> "<name>" <email> [dir]
+```
+
+Repos under `dir` (default `~/<org>/`) commit as that identity and use `~/.ssh/<org>` for SSH; add the printed public key to the org's Git host. Commits outside an org folder are refused.

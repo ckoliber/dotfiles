@@ -5,8 +5,10 @@
 	rebase = true
 
 [user]
-	name = Hoomaan
-	email = ckoliber@gmail.com
+	useConfigOnly = true
+
+[include]
+	path = ~/.config/git/identities
 
 [alias]
 	d = pull
