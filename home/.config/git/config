@@ -7,6 +7,12 @@
 [user]
 	useConfigOnly = true
 
+[commit]
+	gpgsign = true
+
+[gpg]
+	format = ssh
+
 [include]
 	path = ~/.config/git/identities
 

@@ -59,4 +59,4 @@ Names, emails and SSH keys are kept per machine, never in this repo. Create one 
 git identity <org> "<name>" <email> [dir]
 ```
 
-Repos under `dir` (default `~/<org>/`) commit as that identity and use `~/.ssh/<org>` for SSH; add the printed public key to the org's Git host. Commits outside an org folder are refused.
+Repos under `dir` (default `~/<org>/`) commit as that identity and use `~/.ssh/<org>` for both SSH and commit signing; add the printed public key to the org's Git host as an authentication and signing key. Commits outside an org folder are refused.
