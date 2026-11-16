@@ -1,0 +1,19 @@
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = true
+
+[user]
+	name = Hoomaan
+	email = ckoliber@gmail.com
+
+[alias]
+	d = pull
+	p = push
+	st = status
+	co = checkout
+	br = branch
+	cm = commit
+	df = diff
+	lg = log --oneline --graph --all --decorate

@@ -1,0 +1,171 @@
+{
+  // ======================================================
+  // Git configuration
+  // ======================================================
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.replaceTagsWhenPull": true,
+  "git.requireGitUserConfig": false,
+  "git.blame.statusBarItem.enabled": false,
+  "git.blame.editorDecoration.enabled": true,
+
+  // ======================================================
+  // Editor behavior & formatting
+  // ======================================================
+  "editor.tabSize": 2,
+  "prettier.tabWidth": 2,
+  "prettier.printWidth": 150,
+  "editor.formatOnSave": true,
+  "editor.detectIndentation": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.fontFamily": "Cascadia Code, monospace",
+
+  // ======================================================
+  // Workbench appearance
+  // ======================================================
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.colorTheme": "Hyper",
+
+  // ======================================================
+  // Integrated terminal (global)
+  // ======================================================
+  "terminal.integrated.fontFamily": "MesloLGM Nerd Font",
+
+  // ======================================================
+  // Integrated terminal (Windows)
+  // ======================================================
+  "terminal.integrated.defaultProfile.windows": "bash",
+  "terminal.integrated.automationProfile.windows": {
+    "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+    "args": ["-l"]
+  },
+  "terminal.integrated.profiles.windows": {
+    "bash": {
+      "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+      "args": ["-l"]
+    }
+  },
+
+  // ======================================================
+  // Integrated terminal (Linux)
+  // ======================================================
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.automationProfile.linux": {
+    "path": "/usr/bin/bash",
+    "args": ["-l"]
+  },
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "/usr/bin/bash",
+      "args": ["-l"]
+    }
+  },
+
+  // ======================================================
+  // Integrated terminal (macOS)
+  // ======================================================
+  "terminal.integrated.defaultProfile.osx": "bash",
+  "terminal.integrated.automationProfile.osx": {
+    "path": "/opt/homebrew/bin/bash",
+    "args": ["-l"]
+  },
+  "terminal.integrated.profiles.osx": {
+    "bash": {
+      "path": "/opt/homebrew/bin/bash",
+      "args": ["-l"]
+    }
+  },
+
+  // ======================================================
+  // Diff / performance tuning
+  // ======================================================
+  "diffEditor.maxComputationTime": 0,
+
+  // ======================================================
+  // Build tools & language tooling
+  // ======================================================
+  "makefile.configureOnOpen": false,
+  "go.toolsManagement.autoUpdate": true,
+
+  // ======================================================
+  // Golang
+  // ======================================================
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[go.mod]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[go.sum]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+
+  // ======================================================
+  // Python
+  // ======================================================
+  "ruff.configurationPreference": "filesystemFirst",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+
+  // ======================================================
+  // Shellscript
+  // ======================================================
+  "[shellscript]": {
+    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode"
+  },
+
+  // ======================================================
+  // Terraform
+  // ======================================================
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "[terraform-vars]": {
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "[hcl]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+
+  // ======================================================
+  // Jsonnet
+  // ======================================================
+  "[jsonnet]": {
+    "editor.defaultFormatter": "Grafana.vscode-jsonnet"
+  },
+
+  // ======================================================
+  // Alloy
+  // ======================================================
+  "[grafana-alloy]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+
+  // ======================================================
+  // TOML
+  // ======================================================
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+
+  // ======================================================
+  // Custom
+  // ======================================================
+  "customLocalFormatters.formatters": [
+    {
+      "command": "terragrunt hcl format --stdin",
+      "languages": ["hcl"]
+    },
+    {
+      "command": "alloy fmt -",
+      "languages": ["grafana-alloy"]
+    }
+  ],
+
+  "workbench.editor.empty.hint": "hidden",
+  "terminal.integrated.scrollback": 100000,
+  "terminal.integrated.initialHint": false,
+  "python.createEnvironment.trigger": "off"
+  // "telemetry.telemetryLevel": "all"
+}
