@@ -1,19 +1,23 @@
 #!/usr/bin/env bash
-# Usage: git identity <org> <name> <email> [dir]
-# Repos under [dir] (default ~/<org>) commit as <name> <email> and use ~/.ssh/<org> for SSH
+# Usage: git identity <host>[/<path>] "<name>" "<email>"
+# Repos with a remote on <host> (under <path>) commit as <name> <email>, and SSH to <host> uses ~/.ssh/<id>,
+# where <id> is <host>[/<path>] with "/" replaced by "-", e.g. github.com-ckoliber
 set -euo pipefail
 
-[ $# -ge 3 ] || { echo "Usage: git identity <org> <name> <email> [dir]" >&2 && exit 1; }
-org=$1 name=$2 email=$3 dir=${4:-"~/$1"}
-config=$HOME/.config/git/$org
+[ $# -eq 3 ] || { echo 'Usage: git identity <host>[/<path>] "<name>" "<email>"' >&2 && exit 1; }
+id=${1//\//-} host=${1%%/*} name=$2 email=$3
+[[ "$1" == */* ]] && prefix=${1#*/}/ || prefix=
+config=$HOME/.config/git/$id
 
-mkdir -p "$(dirname "$config")" "$HOME/.ssh" "${dir/#\~/$HOME}"
-[ -f "$HOME/.ssh/$org" ] || ssh-keygen -t ed25519 -C "$email" -f "$HOME/.ssh/$org" -N ""
+mkdir -p "$(dirname "$config")" "$HOME/.ssh/config.d"
+[ -f "$HOME/.ssh/$id" ] || ssh-keygen -t ed25519 -C "$email" -f "$HOME/.ssh/$id" -N ""
 git config -f "$config" user.name "$name"
 git config -f "$config" user.email "$email"
-git config -f "$config" user.signingkey "~/.ssh/$org.pub"
-git config -f "$config" core.sshCommand "ssh -i ~/.ssh/$org -o IdentitiesOnly=yes"
-git config -f "$HOME/.config/git/identities" --replace-all "includeIf.gitdir:$dir/.path" "~/.config/git/$org"
+git config -f "$config" user.signingkey "~/.ssh/$id.pub"
+for url in "git@$host:${prefix:-*/}" "ssh://git@$host*/$prefix" "https://$host/$prefix"; do
+  git config -f "$HOME/.config/git/identities" --replace-all "includeIf.hasconfig:remote.*.url:$url**.path" "~/.config/git/$id"
+done
+printf 'Host %s\n  IdentityFile ~/.ssh/%s\n  IdentitiesOnly yes\n' "$host" "$id" >"$HOME/.ssh/config.d/$id"
 
-echo "Add this public key to $org's Git host for both authentication and signing:"
-cat "$HOME/.ssh/$org.pub"
+echo "Add this public key to $host for both authentication and signing:"
+cat "$HOME/.ssh/$id.pub"

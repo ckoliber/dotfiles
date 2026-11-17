@@ -53,10 +53,11 @@ To update later, run `git -C dotfiles pull` and `bash dotfiles/install.sh` again
 
 ### Git Identities
 
-Names, emails and SSH keys are kept per machine, never in this repo. Create one identity per org:
+Names, emails and SSH keys are kept per machine, never in this repo. Create one identity per Git host or org:
 
 ```bash
-git identity <org> "<name>" <email> [dir]
+git identity <host>[/<path>] "<name>" "<email>"
+# e.g. git identity github.com/ckoliber "Hoomaan Nemati" "ckoliber@gmail.com"
 ```
 
-Repos under `dir` (default `~/<org>/`) commit as that identity and use `~/.ssh/<org>` for both SSH and commit signing; add the printed public key to the org's Git host as an authentication and signing key. Commits outside an org folder are refused.
+Repos with a remote on `host` (under `path`, in SSH or HTTPS form) commit as that identity and sign with `~/.ssh/<host>-<path>`, and every SSH connection to `host` (git, mise, ssh) uses that key; add the printed public key to the Git host as an authentication and signing key. Repos without a matching remote refuse to commit.
