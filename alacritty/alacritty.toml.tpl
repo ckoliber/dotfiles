@@ -9,7 +9,7 @@ save_to_clipboard = true
 
 [keyboard]
 bindings = [
-{%- if os() == "macos" %}
+{%- if os() == "osx" %}
   { key = "A", mods = "Command", chars = "\u0001" },       # Ctrl+A  line start
   { key = "B", mods = "Command", chars = "\u0002" },       # Ctrl+B  back char
   { key = "C", mods = "Command", chars = "\u0003" },       # Ctrl+C  SIGINT
@@ -42,10 +42,10 @@ bindings = [
 
 [terminal.shell]
 {%- if os() == "windows" %}
-program = "C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe"
+program = 'C:\Program Files\Git\bin\bash.exe'
 {%- elif os() == "linux" %}
 program = "/usr/bin/bash"
-{%- elif os() == "macos" %}
+{%- elif os() == "osx" %}
 program = "/opt/homebrew/bin/bash"
 {%- endif %}
 args = ["--login"]

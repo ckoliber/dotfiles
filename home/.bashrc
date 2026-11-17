@@ -1,3 +1,6 @@
+# Interactive only
+[[ $- == *i* ]] || return
+
 # Initialize mise
 if command -v mise &>/dev/null; then
   eval "$(mise activate bash)"

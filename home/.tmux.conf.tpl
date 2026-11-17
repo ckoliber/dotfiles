@@ -3,7 +3,7 @@ set -g default-terminal "xterm-256color"
 set -g default-shell "C:/Program Files/Git/bin/bash.exe" --login
 {%- elif os() == "linux" -%}
 set -g default-shell /usr/bin/bash
-{%- elif os() == "macos" -%}
+{%- elif os() == "osx" -%}
 set -g default-shell /opt/homebrew/bin/bash
 {%- endif %}
 

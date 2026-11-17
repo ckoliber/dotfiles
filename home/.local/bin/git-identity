@@ -4,16 +4,16 @@
 set -euo pipefail
 
 [ $# -ge 3 ] || { echo "Usage: git identity <org> <name> <email> [dir]" >&2 && exit 1; }
-org=$1 name=$2 email=$3 dir=${4:-$HOME/$1}
+org=$1 name=$2 email=$3 dir=${4:-"~/$1"}
 config=$HOME/.config/git/$org
 
-mkdir -p "$(dirname "$config")" "$HOME/.ssh" "$dir"
+mkdir -p "$(dirname "$config")" "$HOME/.ssh" "${dir/#\~/$HOME}"
 [ -f "$HOME/.ssh/$org" ] || ssh-keygen -t ed25519 -C "$email" -f "$HOME/.ssh/$org" -N ""
 git config -f "$config" user.name "$name"
 git config -f "$config" user.email "$email"
 git config -f "$config" user.signingkey "~/.ssh/$org.pub"
 git config -f "$config" core.sshCommand "ssh -i ~/.ssh/$org -o IdentitiesOnly=yes"
-git config -f "$HOME/.config/git/identities" --replace-all "includeIf.gitdir:${dir/#$HOME/~}/.path" "~/.config/git/$org"
+git config -f "$HOME/.config/git/identities" --replace-all "includeIf.gitdir:$dir/.path" "~/.config/git/$org"
 
 echo "Add this public key to $org's Git host for both authentication and signing:"
 cat "$HOME/.ssh/$org.pub"

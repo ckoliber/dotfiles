@@ -62,7 +62,7 @@
   },
 
   // ======================================================
-  // Integrated terminal (macOS)
+  // Integrated terminal (OSX)
   // ======================================================
   "terminal.integrated.defaultProfile.osx": "bash",
   "terminal.integrated.automationProfile.osx": {
@@ -150,6 +150,13 @@
   },
 
   // ======================================================
+  // YAML
+  // ======================================================
+  "[yaml]": {
+    "editor.defaultFormatter": "jkillian.custom-local-formatters"
+  },
+
+  // ======================================================
   // Custom
   // ======================================================
   "customLocalFormatters.formatters": [
@@ -160,6 +167,10 @@
     {
       "command": "alloy fmt -",
       "languages": ["grafana-alloy"]
+    },
+    {
+      "command": "yamlfmt -in",
+      "languages": ["yaml"]
     }
   ],
 
