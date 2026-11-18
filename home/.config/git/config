@@ -1,8 +1,24 @@
-[init]
-	defaultBranch = main
+[alias]
+	br = branch
+	cm = commit
+	co = checkout
+	d = pull
+	df = diff
+	lg = log --oneline --graph --all --decorate
+	p = push
+	st = status
+
+[commit]
+	gpgsign = true
 
 [core]
 	autocrlf = input
+
+[gpg]
+	format = ssh
+
+[init]
+	defaultBranch = main
 
 [pull]
 	rebase = true
@@ -10,21 +26,6 @@
 [user]
 	useConfigOnly = true
 
-[commit]
-	gpgsign = true
-
-[gpg]
-	format = ssh
-
+# Last, so identities override the defaults above
 [include]
 	path = ~/.config/git/identities
-
-[alias]
-	d = pull
-	p = push
-	st = status
-	co = checkout
-	br = branch
-	cm = commit
-	df = diff
-	lg = log --oneline --graph --all --decorate

@@ -60,4 +60,4 @@ git identity <host>[/<path>] "<name>" "<email>"
 # e.g. git identity github.com/ckoliber "Hoomaan Nemati" "ckoliber@gmail.com"
 ```
 
-Repos with a remote on `host` (under `path`, in SSH or HTTPS form) commit as that identity and sign with `~/.ssh/<host>-<path>`, and every SSH connection to `host` (git, mise, ssh) uses that key; add the printed public key to the Git host as an authentication and signing key. Repos without a matching remote refuse to commit.
+Repos with a remote on `host` (under `path`, in SSH or HTTPS form) commit as that identity and sign with `~/.ssh/<host>-<path>`. Each identity gets a `Host` block in `~/.ssh/config.d/<host>-<path>` with its key, so every tool (git, mise, ssh) uses it; an identity with a `path` (e.g. a second GitHub account) gets the alias `Host <host>-<path>` instead, and its URLs are rewritten to it. Add the printed public key to the Git host as an authentication and signing key. Repos without a matching remote refuse to commit.
