@@ -3,10 +3,6 @@ GITEA_CLI_HOST = "https://git.ckoliber.dev"
 GITEA_CLI_DATA_DIR = "{{config_root}}/.config/gt/data"
 GITEA_CLI_CONFIG_DIR = "{{config_root}}/.config/gt"
 
-[vars]
-key = "{{config_root}}/.config/ssh/id_ed25519"
-gitconfig = "{{config_root}}/.config/git/config"
-
 [tools]
 "forgejo:gitea/cli" = { api_url = "https://gitea.com/api/v1", version = "2.0.0", bin = "gt" }
 
@@ -14,14 +10,16 @@ gitconfig = "{{config_root}}/.config/git/config"
 description = "Log in to Gitea and set up this machine's SSH key and the git identity from the account"
 shell = "bash -euo pipefail -c"
 run = '''
+key="{{config_root}}/.config/ssh/id_ed25519"
+gitconfig="{{config_root}}/.config/git/config"
 gt auth status >/dev/null 2>&1 || gt auth login --oauth
-mkdir -p "$(dirname "{{vars.key}}")" "$(dirname "{{vars.gitconfig}}")"
-[ -f "{{vars.key}}" ] || ssh-keygen -q -t ed25519 -N "" -C "$(hostname)" -f "{{vars.key}}"
-pub=$(cut -d' ' -f1,2 "{{vars.key}}.pub")
-gt ssh-key list --json key --jq '.[].key' | cut -d' ' -f1,2 | grep -xF "$pub" >/dev/null || gt ssh-key create "{{vars.key}}.pub"
-git config -f "{{vars.gitconfig}}" user.name "$(gt api /user --jq 'if .full_name == "" then .login else .full_name end')"
-git config -f "{{vars.gitconfig}}" user.email "$(gt api /user --jq .email)"
-git config -f "{{vars.gitconfig}}" user.signingkey "{{vars.key}}"
-git config -f "{{vars.gitconfig}}" core.sshCommand "ssh -i {{vars.key}} -o IdentitiesOnly=yes"
-git config --global "includeIf.gitdir:{{config_root}}/.path" "{{vars.gitconfig}}"
+mkdir -p "$(dirname "$key")" "$(dirname "$gitconfig")"
+[ -f "$key" ] || ssh-keygen -q -t ed25519 -N "" -C "$(hostname)" -f "$key"
+pub=$(cut -d' ' -f1,2 "$key.pub")
+gt ssh-key list --json key --jq '.[].key' | cut -d' ' -f1,2 | grep -xF "$pub" >/dev/null || gt ssh-key create "$key.pub"
+git config -f "$gitconfig" user.name "$(gt api /user --jq 'if .full_name == "" then .login else .full_name end')"
+git config -f "$gitconfig" user.email "$(gt api /user --jq .email)"
+git config -f "$gitconfig" user.signingkey "$key"
+git config -f "$gitconfig" core.sshCommand "ssh -i $key -o IdentitiesOnly=yes"
+git config --global "includeIf.gitdir:{{config_root}}/.path" "$gitconfig"
 '''

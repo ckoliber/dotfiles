@@ -9,7 +9,7 @@ shfmt = "3.13.1"
 yamlfmt = "0.21.0"
 starship = "1.27.0"
 tmux = { version = "3.8", os = ["linux", "macos"] }
-"github:marlocarlo/psmux" = { version = "3.4.0", os = ["windows"] }
+"github:psmux/psmux" = { version = "3.4.0", os = ["windows"] }
 codex = "0.166.0"
 claude = "2.1.308"
 opencode = "1.17.17"
