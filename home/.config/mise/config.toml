@@ -6,6 +6,7 @@ jq = "1.8.1"
 yq = "4.52.4"
 vim = "9.2.1252"
 shfmt = "3.13.1"
+yamlfmt = "0.21.0"
 starship = "1.27.0"
 tmux = { version = "3.8", os = ["linux", "macos"] }
 "github:marlocarlo/psmux" = { version = "3.4.0", os = ["windows"] }
