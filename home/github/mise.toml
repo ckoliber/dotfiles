@@ -8,7 +8,7 @@ gh = "2.92.0"
 [tasks.setup]
 description = "Log in to GitHub and set up this machine's SSH key and the git identity from the account"
 shell = "bash -euo pipefail -c"
-run = '''
+run = """
 key="{{config_root}}/.config/ssh/id_ed25519"
 gitconfig="{{config_root}}/.config/git/config"
 gh auth status >/dev/null 2>&1 || gh auth login --web --git-protocol ssh --skip-ssh-key --scopes admin:public_key,admin:ssh_signing_key
@@ -20,8 +20,8 @@ scopes=$(gh auth status 2>&1)
 gh api user/keys --jq '.[].key' | cut -d' ' -f1,2 | grep -xF "$pub" >/dev/null || gh ssh-key add "$key.pub" --title "$(hostname)" --type authentication
 gh api user/ssh_signing_keys --jq '.[].key' | cut -d' ' -f1,2 | grep -xF "$pub" >/dev/null || gh ssh-key add "$key.pub" --title "$(hostname)" --type signing
 git config -f "$gitconfig" user.name "$(gh api user --jq '.name // .login')"
-git config -f "$gitconfig" user.email "$(gh api user --jq '"\(.id)+\(.login)@users.noreply.github.com"')"
+git config -f "$gitconfig" user.email "$(gh api user --jq '"\\(.id)+\\(.login)@users.noreply.github.com"')"
 git config -f "$gitconfig" user.signingkey "$key"
 git config -f "$gitconfig" core.sshCommand "ssh -i $key -o IdentitiesOnly=yes"
 git config --global "includeIf.gitdir:{{config_root}}/.path" "$gitconfig"
-'''
+"""
