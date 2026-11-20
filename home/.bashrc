@@ -6,8 +6,8 @@ if command -v mise &>/dev/null; then
   eval "$(mise activate bash)"
 fi
 
-# Auto-start tmux if not already in tmux and not in VS Code terminal and not in Termux
-if command -v tmux &>/dev/null && [ -z "$TMUX" ] && [ -z "$VSCODE_INJECTION" ] && [ -z "$TERMUX_VERSION" ]; then
+# Auto-start tmux if not already in tmux and not in VS Code terminal
+if command -v tmux &>/dev/null && [ -z "$TMUX" ] && [ -z "$VSCODE_INJECTION" ]; then
   exec tmux new-session -A -s main
 fi
 

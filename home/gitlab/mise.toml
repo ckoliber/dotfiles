@@ -1,0 +1,26 @@
+[env]
+GITLAB_HOST = "https://gitlab.com"
+GLAB_CONFIG_DIR = "{{config_root}}/.config/glab"
+
+[vars]
+key = "{{config_root}}/.config/ssh/id_ed25519"
+gitconfig = "{{config_root}}/.config/git/config"
+
+[tools]
+glab = "1.131.0"
+
+[tasks.setup]
+description = "Log in to GitLab and set up this machine's SSH key and the git identity from the account"
+shell = "bash -euo pipefail -c"
+run = '''
+glab auth status >/dev/null 2>&1 || glab auth login --web --git-protocol ssh
+mkdir -p "$(dirname "{{vars.key}}")" "$(dirname "{{vars.gitconfig}}")"
+[ -f "{{vars.key}}" ] || ssh-keygen -q -t ed25519 -N "" -C "$(hostname)" -f "{{vars.key}}"
+pub=$(cut -d' ' -f1,2 "{{vars.key}}.pub")
+glab api user/keys | jq -r '.[].key' | cut -d' ' -f1,2 | grep -xF "$pub" >/dev/null || glab ssh-key add "{{vars.key}}.pub" --title "$(hostname)"
+git config -f "{{vars.gitconfig}}" user.name "$(glab api user | jq -r '.name // .username')"
+git config -f "{{vars.gitconfig}}" user.email "$(glab api user | jq -r '.commit_email // .email')"
+git config -f "{{vars.gitconfig}}" user.signingkey "{{vars.key}}"
+git config -f "{{vars.gitconfig}}" core.sshCommand "ssh -i {{vars.key}} -o IdentitiesOnly=yes"
+git config --global "includeIf.gitdir:{{config_root}}/.path" "{{vars.gitconfig}}"
+'''

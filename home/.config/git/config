@@ -25,7 +25,3 @@
 
 [user]
 	useConfigOnly = true
-
-# Last, so identities override the defaults above
-[include]
-	path = ~/.config/git/identities
