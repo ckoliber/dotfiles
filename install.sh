@@ -24,7 +24,7 @@ elif [ "$OS" = linux ] && [ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
 fi
 
 has() { command -v "$1" >/dev/null 2>&1; }
-root() { if [ "$(id -u)" -eq 0 ]; then "$@"; else sudo "$@"; fi; }
+sudo() { if [ "$(id -u)" -eq 0 ]; then "$@"; else command sudo "$@"; fi; }
 
 link() {
   mkdir -p "$(dirname "$2")"
@@ -64,60 +64,43 @@ packages_windows() {
 }
 
 packages_linux() {
-  local pm name install refresh= ssh=openssh docker=docker editor=codium repos=/etc/yum.repos.d
+  local pm repo name key rpm source install ssh=openssh docker=docker editor=codium repodir=/etc/yum.repos.d
   for pm in apt dnf zypper pacman; do has "$pm" && break; done
   has "$pm" || { echo "Unsupported Linux package manager" >&2 && exit 1; }
 
-  if [ "$pm" = apt ]; then
-    install=(env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get install -y)
-    ssh=openssh-client docker=docker.io refresh=1
-  elif [ "$pm" = dnf ]; then
-    install=(dnf install -y)
-    ssh=openssh-clients docker=moby-engine
-  elif [ "$pm" = zypper ]; then
-    install=(zypper --non-interactive --gpg-auto-import-keys install)
-    repos=/etc/zypp/repos.d
-  elif [ "$pm" = pacman ]; then
-    install=(pacman -S --needed --noconfirm)
-    # Arch ships VSCodium's open source build as `code`, and mise in its own repos
-    editor=code
-    root pacman -Syu --noconfirm
-  fi
+  case $pm in
+  apt) install=(env DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a apt-get install -y) ssh=openssh-client docker=docker.io ;;
+  dnf) install=(dnf install -y) ssh=openssh-clients docker=moby-engine ;;
+  zypper) install=(zypper --non-interactive --gpg-auto-import-keys install) repodir=/etc/zypp/repos.d ;;
+  # Arch ships mise in its own repos, and VSCodium's open source build as `code`
+  pacman) install=(pacman -Syu --needed --noconfirm) editor=code ;;
+  esac
 
-  for name in git bash curl wget; do need "$name"; done
-  need ssh "$ssh"
-  has mise || [ "$pm" = pacman ] || repo mise https://mise.jdx.dev/gpg-key.pub "https://mise.jdx.dev/deb stable main" https://mise.jdx.dev/rpm/mise.repo
-  need mise
+  # Elsewhere mise and VSCodium come from their own repos: name, apt signing key, rpm .repo file, apt source
+  local repos=(
+    "mise https://mise.jdx.dev/gpg-key.pub https://mise.jdx.dev/rpm/mise.repo https://mise.jdx.dev/deb stable main"
+    "vscodium https://repo.vscodium.dev/vscodium.gpg https://repo.vscodium.dev/vscodium.repo https://repo.vscodium.dev/deb vscodium main"
+  )
+  [ "$pm" = pacman ] || for repo in "${repos[@]}"; do
+    read -r name key rpm source <<<"$repo"
+    [ -n "$DESKTOP" ] || [ "$name" = mise ] || continue
+    if [ "$pm" = apt ]; then
+      sudo curl -fsSLo "/usr/share/keyrings/$name.asc" "$key"
+      echo "deb [signed-by=/usr/share/keyrings/$name.asc] $source" | sudo tee "/etc/apt/sources.list.d/$name.list" >/dev/null
+    else
+      sudo curl -fsSLo "$repodir/$name.repo" "$rpm"
+    fi
+  done
+  [ "$pm" != apt ] || sudo apt-get update
+
+  local packages=(git bash curl wget "$ssh" mise)
+  [ -z "$DESKTOP" ] || packages+=(alacritty mpv "$editor")
+  # The distro's Docker conflicts with an existing docker-ce, so leave that one alone
+  [ -z "$DESKTOP" ] || has docker || packages+=("$docker")
+  sudo "${install[@]}" "${packages[@]}"
 
   [ -n "$DESKTOP" ] || return 0
-  need alacritty
-  need mpv
-  need docker "$docker"
-  has "$editor" || [ "$pm" = pacman ] || repo vscodium https://repo.vscodium.dev/vscodium.gpg "https://repo.vscodium.dev/deb vscodium main" https://repo.vscodium.dev/vscodium.repo
-  need "$editor"
   has brave-browser || curl -fsS https://dl.brave.com/install.sh | sh || echo "Brave failed to install, skipping" >&2
-}
-
-# Installs package $2 (default $1) unless command $1 exists, refreshing apt's lists first if a repo was added
-need() {
-  has "$1" && return 0
-  if [ -n "$refresh" ]; then
-    root apt-get update
-    refresh=
-  fi
-  root "${install[@]}" "${2:-$1}"
-}
-
-# Adds repo $1: for apt its signing key $2 and source $3, else the .repo file $4
-repo() {
-  if [ "$pm" = apt ]; then
-    need gpg
-    curl -fsSL "$2" | gpg --dearmor | root tee "/usr/share/keyrings/$1.gpg" >/dev/null
-    echo "deb [signed-by=/usr/share/keyrings/$1.gpg] $3" | root tee "/etc/apt/sources.list.d/$1.list" >/dev/null
-    refresh=1
-  else
-    root curl -fsSLo "$repos/$1.repo" "$4"
-  fi
 }
 
 packages_osx() {
@@ -141,20 +124,55 @@ packages_osx() {
   fi
 }
 
-# home/ mirrors $HOME: *.tpl files are rendered, everything else is linked
-home() {
-  (cd "$DOTFILES/home" && find . -type f) | while read -r file; do
-    file=${file#./}
-    if [[ $file == *.tpl ]]; then
-      render "home/$file" "$HOME/${file%.tpl}"
-    else
-      link "home/$file" "$HOME/$file"
-    fi
-  done
-  touch "$HOME/.gitconfig"
-  link home/.profile "$HOME/.zprofile"
-  link home/.profile "$HOME/.bash_profile"
-  [ -e "$HOME/.vim" ] || git clone --depth 1 https://github.com/morhetz/gruvbox.git "$HOME/.vim"
+desktop_windows() {
+  local fonts=$HOME/AppData/Local/Microsoft/Windows/Fonts user=$HOME/AppData/Roaming/VSCodium/User
+  local startup="$HOME/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup"
+  mkdir -p "$fonts" && cp -f "$DOTFILES"/fonts/*.ttf "$fonts/"
+  render alacritty/alacritty.toml.tpl "$HOME/AppData/Roaming/alacritty/alacritty.toml"
+  link vscode/settings.json "$user/settings.json"
+  link vscode/keybindings.json "$user/keybindings.json"
+  ! has codium || sed 's/\r$//; s/^/--install-extension /' "$DOTFILES/vscode/extensions.txt" | xargs codium --force
+  setx MSYS2_PATH_TYPE inherit >/dev/null
+  powershell -NoProfile -Command 'Get-ChildItem "$env:LOCALAPPDATA\Microsoft\Windows\Fonts\*.ttf" | ForEach-Object { New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -Name "$($_.BaseName) (TrueType)" -Value $_.FullName -Force | Out-Null }'
+  powershell -NoProfile -Command '$lnk="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Alacritty\Alacritty.lnk"; if (Test-Path $lnk) { $ws=New-Object -ComObject WScript.Shell; $sc=$ws.CreateShortcut($lnk); $sc.WorkingDirectory=$env:USERPROFILE; $sc.Save() }'
+
+  link alacritty/quake.ahk "$startup/quake.ahk"
+  cmd //c start "" "$(cygpath -w "$startup/quake.ahk")"
+}
+
+desktop_linux() {
+  local fonts=$HOME/.local/share/fonts user=$HOME/.config/VSCodium/User codium=codium
+  # Arch ships VSCodium's open source build as `code`
+  ! has pacman || user="$HOME/.config/Code - OSS/User" codium=code
+  mkdir -p "$fonts" && cp -f "$DOTFILES"/fonts/*.ttf "$fonts/"
+  ! has fc-cache || fc-cache -f "$fonts"
+  render alacritty/alacritty.toml.tpl "$HOME/.config/alacritty/alacritty.toml"
+  link vscode/settings.json "$user/settings.json"
+  link vscode/keybindings.json "$user/keybindings.json"
+  ! has "$codium" || sed 's/\r$//; s/^/--install-extension /' "$DOTFILES/vscode/extensions.txt" | xargs "$codium" --force
+
+  [[ "${XDG_CURRENT_DESKTOP:-}" == *GNOME* ]] || { echo "Quake mode needs GNOME, skipping" >&2 && return; }
+  local favorites
+  favorites=$(gsettings get org.gnome.shell favorite-apps | sed -E "s/@as //; s/'Alacritty\.desktop',? ?//; s/^\[/['Alacritty.desktop', /; s/, \]$/]/")
+  gsettings set org.gnome.shell favorite-apps "$favorites"
+  gsettings set org.gnome.shell.keybindings switch-to-application-1 "['<Control>1']"
+  # Ubuntu's dock replaces the shell's app hotkeys with its own
+  ! gsettings writable org.gnome.shell.extensions.dash-to-dock app-hotkey-1 >/dev/null 2>&1 ||
+    gsettings set org.gnome.shell.extensions.dash-to-dock app-hotkey-1 "['<Control>1']"
+}
+
+desktop_osx() {
+  local user="$HOME/Library/Application Support/VSCodium/User"
+  cp -f "$DOTFILES"/fonts/*.ttf "$HOME/Library/Fonts/"
+  render alacritty/alacritty.toml.tpl "$HOME/.config/alacritty/alacritty.toml"
+  link vscode/settings.json "$user/settings.json"
+  link vscode/keybindings.json "$user/keybindings.json"
+  ! has codium || sed 's/\r$//; s/^/--install-extension /' "$DOTFILES/vscode/extensions.txt" | xargs codium --force
+  xattr -r -d com.apple.quarantine /Applications/Alacritty.app 2>/dev/null || true
+
+  link alacritty/quake.lua "$HOME/.hammerspoon/init.lua"
+  killall Hammerspoon 2>/dev/null || true
+  open -g -a Hammerspoon
 }
 
 agent_windows() {
@@ -188,61 +206,29 @@ agent_osx() {
   : # launchd already runs it for every login session
 }
 
-tools() {
-  mise install -y || echo "Some mise tools failed to install, run: mise install" >&2
-}
+# home/ mirrors $HOME: *.tpl files are rendered, everything else is linked; then the global and per-org mise tools
+home() {
+  local dir
+  (cd "$DOTFILES/home" && find . -type f) | while read -r file; do
+    file=${file#./}
+    if [[ $file == *.tpl ]]; then
+      render "home/$file" "$HOME/${file%.tpl}"
+    else
+      link "home/$file" "$HOME/$file"
+    fi
+  done
+  touch "$HOME/.gitconfig"
+  link home/.profile "$HOME/.zprofile"
+  link home/.profile "$HOME/.bash_profile"
+  [ -e "$HOME/.vim" ] || git clone --depth 1 https://github.com/morhetz/gruvbox.git "$HOME/.vim"
 
-apps() {
-  local codium=${4:-codium}
-  mkdir -p "$1" && cp -f "$DOTFILES"/fonts/*.ttf "$1/"
-  render alacritty/alacritty.toml.tpl "$2/alacritty.toml"
-  link vscode/settings.json "$3/settings.json"
-  link vscode/keybindings.json "$3/keybindings.json"
-  ! has "$codium" || sed 's/\r$//; s/^/--install-extension /' "$DOTFILES/vscode/extensions.txt" | xargs "$codium" --force
-}
-
-desktop_windows() {
-  local startup="$HOME/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup"
-  apps "$HOME/AppData/Local/Microsoft/Windows/Fonts" "$HOME/AppData/Roaming/alacritty" "$HOME/AppData/Roaming/VSCodium/User"
-  setx MSYS2_PATH_TYPE inherit >/dev/null
-  powershell -NoProfile -Command 'Get-ChildItem "$env:LOCALAPPDATA\Microsoft\Windows\Fonts\*.ttf" | ForEach-Object { New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -Name "$($_.BaseName) (TrueType)" -Value $_.FullName -Force | Out-Null }'
-  powershell -NoProfile -Command '$lnk="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Alacritty\Alacritty.lnk"; if (Test-Path $lnk) { $ws=New-Object -ComObject WScript.Shell; $sc=$ws.CreateShortcut($lnk); $sc.WorkingDirectory=$env:USERPROFILE; $sc.Save() }'
-
-  link alacritty/quake.ahk "$startup/quake.ahk"
-  cmd //c start "" "$(cygpath -w "$startup/quake.ahk")"
-}
-
-desktop_linux() {
-  # Arch ships VSCodium's open source build as `code`
-  if has pacman; then
-    apps "$HOME/.local/share/fonts" "$HOME/.config/alacritty" "$HOME/.config/Code - OSS/User" code
-  else
-    apps "$HOME/.local/share/fonts" "$HOME/.config/alacritty" "$HOME/.config/VSCodium/User"
-  fi
-  ! has fc-cache || fc-cache -f "$HOME/.local/share/fonts"
-
-  [[ "${XDG_CURRENT_DESKTOP:-}" == *GNOME* ]] || { echo "Quake mode needs GNOME, skipping" >&2 && return; }
-  local favorites
-  favorites=$(gsettings get org.gnome.shell favorite-apps | sed -E "s/@as //; s/'Alacritty\.desktop',? ?//; s/^\[/['Alacritty.desktop', /; s/, \]$/]/")
-  gsettings set org.gnome.shell favorite-apps "$favorites"
-  gsettings set org.gnome.shell.keybindings switch-to-application-1 "['<Control>1']"
-  # Ubuntu's dock replaces the shell's app hotkeys with its own
-  ! gsettings writable org.gnome.shell.extensions.dash-to-dock app-hotkey-1 >/dev/null 2>&1 ||
-    gsettings set org.gnome.shell.extensions.dash-to-dock app-hotkey-1 "['<Control>1']"
-}
-
-desktop_osx() {
-  apps "$HOME/Library/Fonts" "$HOME/.config/alacritty" "$HOME/Library/Application Support/VSCodium/User"
-  xattr -r -d com.apple.quarantine /Applications/Alacritty.app 2>/dev/null || true
-
-  link alacritty/quake.lua "$HOME/.hammerspoon/init.lua"
-  killall Hammerspoon 2>/dev/null || true
-  open -g -a Hammerspoon
+  for dir in "$HOME" "$HOME/github" "$HOME/gitlab" "$HOME/gitea"; do
+    mise -C "$dir" install -y || echo "Some mise tools failed to install, run: mise -C $dir install" >&2
+  done
 }
 
 "packages_$OS"
-home
-tools
-"agent_$OS"
 [ -z "$DESKTOP" ] || "desktop_$OS"
+"agent_$OS"
+home
 echo "Dotfiles installed, open a new terminal to load them."
