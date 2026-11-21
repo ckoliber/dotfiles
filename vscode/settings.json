@@ -169,7 +169,7 @@
       "languages": ["grafana-alloy"]
     },
     {
-      "command": "yamlfmt -in",
+      "command": "yamlfmt -formatter retain_line_breaks_single=true -in",
       "languages": ["yaml"]
     }
   ],
