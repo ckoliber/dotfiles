@@ -13,6 +13,7 @@ run = """
 key="{{config_root}}/.config/ssh/id_ed25519"
 gitconfig="{{config_root}}/.config/git/config"
 gt auth status >/dev/null 2>&1 || gt auth login --oauth
+gt config set ssh_host git.ckoliber.dev:2222 --host "$GITEA_CLI_HOST"
 mkdir -p "$(dirname "$key")" "$(dirname "$gitconfig")"
 [ -f "$key" ] || ssh-keygen -q -t ed25519 -N "" -C "$(hostname)" -f "$key"
 pub=$(cut -d' ' -f1,2 "$key.pub")
